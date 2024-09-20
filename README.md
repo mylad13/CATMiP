@@ -14,3 +14,4 @@ You could also visualize the result and generate gifs by adding `--use_render` a
 
 ## Citation
 The paper for this work will be available very soon!!
+Authors: Milad Farjadnasab, Shahin Sirouspour
