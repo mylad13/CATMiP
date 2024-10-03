@@ -1,5 +1,4 @@
-# CATMiP
-Cooperative and Asynchronous Transformer-based Mission Planning for Heterogeneous Teams of Mobile Robots
+Pytorch implementation of the paper "Cooperative and Asynchronous Transformer-based Mission Planning for Heterogeneous Teams of Mobile Robots". 
 
 ## Training
 
