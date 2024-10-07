@@ -954,7 +954,7 @@ class MiniGridEnv(gym.Env):
         use_partial_comm=False,
         use_orientation=False,
         use_stack = True,
-        algorithm_name = 'mat'
+        algorithm_name = 'amat'
     ):
         self.num_agents = num_agents
         # Can't set both grid_size and width/height

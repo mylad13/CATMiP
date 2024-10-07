@@ -3,7 +3,7 @@ env="GridWorld"
 scenario="MiniGrid-SearchAndRescue-v0"
 num_agents=3
 num_obstacles=30
-algo="mat"
+algo="amat"
 exp="CATMiP_SAR"
 seed_max=1
 
@@ -24,5 +24,5 @@ do
     --n_head 1 --n_embd 192 --n_block 1 --action_size 3 \
     --n_agent_types 2 --agent_types_list 0 1 10 --detect_traces --use_intrinsic_reward --use_action_masking  \
      #removed  --use_agent_obstacle  --use_wandb  --block_doors --block_chance 0.3 --use_time_penalty --use_energy_penalty
-    #  --model_dir "./results/GridWorld/MiniGrid-SearchAndRescue-v0/mat/MAT_for_target_finding/wandb/run-20240826_101428-9oq9qkcu/files"
+    # 
 done

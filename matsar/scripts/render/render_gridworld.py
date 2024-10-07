@@ -90,7 +90,7 @@ def main(args):
     elif all_args.algorithm_name == "mappo" or all_args.algorithm_name == "mappg":
         assert (all_args.use_recurrent_policy and all_args.use_naive_recurrent_policy) == False, (
             "check recurrent policy!")
-    elif all_args.algorithm_name == "mat":
+    elif all_args.algorithm_name == "amat":
         pass
     else:
         raise NotImplementedError

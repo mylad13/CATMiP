@@ -42,7 +42,7 @@ class MultiRoomEnv(Irregular_RoomEnv):
         minNumRooms,
         maxNumRooms,
         maxRoomSize=10,
-        algorithm_name = 'mat'     
+        algorithm_name = 'amat'     
     ):
         assert minNumRooms > 0
         assert maxNumRooms >= minNumRooms
@@ -65,7 +65,7 @@ class MultiRoomEnv(Irregular_RoomEnv):
             minNumRooms = minNumRooms,
             maxNumRooms = maxNumRooms,
             maxRoomSize=10,
-            algorithm_name = 'mat'
+            algorithm_name = 'amat'
         )
 
     def multiroom_gen_grid(self, width, height):

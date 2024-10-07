@@ -58,7 +58,7 @@ class GridWorldEnv(object):
 
 
         global_observation_space = {}
-        if args.algorithm_name == 'mat' or args.algorithm_name == 'mat_dec':
+        if args.algorithm_name == 'amat' or args.algorithm_name == 'mat' or args.algorithm_name == 'mat_dec':
             global_observation_space['agent_class_identifier'] = gym.spaces.Box(low=0, high=1, shape=(args.n_agent_types,), dtype='uint8')
             # global_observation_space['agent_inventory'] = gym.spaces.Box(low=0, high=1, shape=(2,), dtype='uint8')
             global_observation_space['global_agent_map'] = gym.spaces.Box(low=0, high=1, shape=(8 ,args.grid_size, args.grid_size), dtype='float')

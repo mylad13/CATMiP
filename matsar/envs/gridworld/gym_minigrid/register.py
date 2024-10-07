@@ -23,7 +23,7 @@ def register(
     use_time_penalty = False,
     use_energy_penalty = False,
     use_intrinsic_reward = False,
-    algorithm_name = 'mat',
+    algorithm_name = 'amat',
     trajectory_forget_rate = 0.8,
     com_sigma = 5,
     block_doors = False,

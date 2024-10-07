@@ -54,7 +54,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
         use_energy_penalty=False,
         use_intrinsic_reward=False,
         use_agent_obstacle = False,
-        algorithm_name = 'mat',
+        algorithm_name = 'amat',
         trajectory_forget_rate = 0.8,
         com_sigma = 5,
         block_doors = False,

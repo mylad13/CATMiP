@@ -53,7 +53,7 @@ class TransformerPolicy:
         self.num_agents = num_agents
         self.tpdv = dict(dtype=torch.float32, device=device)
 
-        if self.algorithm_name in ["mat", "mat_dec"]:
+        if self.algorithm_name in ["amat", "mat", "mat_dec"]:
             from matsar.algorithms.mat.algorithm.ma_transformer import MultiAgentTransformer as MAT
         elif self.algorithm_name == "mat_gru":
             from matsar.algorithms.mat.algorithm.mat_gru import MultiAgentGRU as MAT

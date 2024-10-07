@@ -33,7 +33,7 @@ class Irregular_RoomEnv(MiniGridEnv):
         minNumRooms,
         maxNumRooms,
         maxRoomSize=10,
-        algorithm_name = 'mat'
+        algorithm_name = 'amat'
     ):
         assert minNumRooms > 0
         assert maxNumRooms >= minNumRooms
@@ -53,7 +53,7 @@ class Irregular_RoomEnv(MiniGridEnv):
             use_full_comm = use_full_comm,
             use_partial_comm = use_partial_comm,
             use_orientation = use_orientation,
-            algorithm_name = 'mat'
+            algorithm_name = 'amat'
         )
 
     def irregular_room_gen_grid(self, width, height):
