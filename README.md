@@ -14,7 +14,7 @@ The performance of a model trained on a $20\times 20$ map with one rescuer agent
 
 
 
-| <img src="./matsar/docs/Task1.gif" width="150" height="150" /> | <img src="./matsar/docs/Task2.gif" width="200" height="200" /> | <img src="./matsar/docs/Task3.gif" width="300" height="300" />
+| <img src="./matsar/docs/Task1.gif" width="150" height="150" loop=infinite /> | <img src="./matsar/docs/Task2.gif" width="220" height="220" /> | <img src="./matsar/docs/Task3.gif" width="330" height="330" />
 |:--:| :--:| :--:| 
 | Task 1 | Task 2 | Task 3 |
 
