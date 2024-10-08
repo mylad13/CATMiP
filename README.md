@@ -10,10 +10,11 @@ Similar to training, you could run `sh render_gridworld.sh` in directory [matsar
 
 ## Results
 
-Here you can see the performance of a model trained on a $20\times 20$ map with one rescuer agent, one explorer agent, and one randomly assigned agent per episode. The following hyperparameters were used:
-| Hyperparameters   | Value  |
-| :----------------: | :------:|
-| Learning Rate        |   $10^{-4}$ |
+The performance of a model trained on a $20\times 20$ map with one rescuer agent, one explorer agent, and one randomly assigned agent per episode is visualized on the three different tasks described in the paper.
+
+<img src="./matsar/docs/Task1.gif" width="40" height="40" />
+![Task 2](./matsar/docs/Task2.gif)
+
 
 
 ## Citation

@@ -473,7 +473,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
                 for j in range(i+1, self.num_agents):
                     # if self.agent_alive[j]:
                     d_ij = euclideandistance(self.agent_pos[i], self.agent_pos[j])
-                    comm_prob = np.exp(-d_ij**2/(2*self.com_sigma**2))
+                    comm_prob = np.exp(-d_ij**2/(self.com_sigma**2))
                     # Sample from this probability
                     if self._rand_float(0, 1) < comm_prob:
                         self.agent_groups[i,j] = 1
@@ -780,7 +780,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
                 for j in range(i+1, self.num_agents):
                     if self.agent_alive[j]:
                         d_ij = euclideandistance(self.agent_pos[i], self.agent_pos[j])
-                        comm_prob = np.exp(-d_ij**2/(2*self.com_sigma**2))
+                        comm_prob = np.exp(-d_ij**2/(self.com_sigma**2))
                         # Sample from this probability
                         if self._rand_float(0, 1) < comm_prob:
                             self.agent_groups[i,j] = 1
