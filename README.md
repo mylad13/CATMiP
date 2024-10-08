@@ -12,11 +12,11 @@ Similar to training, you could run `sh render_gridworld.sh` in directory [matsar
 
 The performance of a model trained on a $20\times 20$ map with one rescuer agent, one explorer agent, and one randomly assigned agent per episode is visualized on the three different tasks described in the paper.
 
-<img src="./matsar/docs/Task1.gif" width="400" height="400" />
 
-| ![Task 1](./matsar/docs/Task1.gif) | 
-|:--:| 
-| Task 1 |
+
+| <img src="./matsar/docs/Task1.gif" width="150" height="150" /> | <img src="./matsar/docs/Task2.gif" width="200" height="200" /> | <img src="./matsar/docs/Task3.gif" width="300" height="300" />
+|:--:| :--:| :--:| 
+| Task 1 | Task 2 | Task 3 |
 
 
 
