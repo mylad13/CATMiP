@@ -51,7 +51,7 @@ class GridWorldRunner(Runner):
             period_rewards = np.zeros((self.n_rollout_threads, self.num_agents, 1))
             auc_area = np.zeros((self.n_rollout_threads, self.max_steps), dtype=np.float32)
             auc_single_area = np.zeros((self.n_rollout_threads, self.num_agents, self.max_steps), dtype=np.float32)
-            self.done_envs = np.zeros((self.n_rollout_threads,)).astype(np.bool)
+            self.done_envs = np.zeros((self.n_rollout_threads,)).astype(np.bool_)
             is_last_step = np.full((self.n_rollout_threads, self.num_agents), False)
             if self.use_linear_lr_decay:
                 self.trainer.policy.lr_decay(episode, episodes)
@@ -273,9 +273,9 @@ class GridWorldRunner(Runner):
         obs['global_agent_map'] = np.zeros((len(dict_obs), self.num_agents, 8, self.map_size, self.map_size), dtype=np.float32)
         obs['local_agent_map'] = np.zeros((len(dict_obs), self.num_agents, 4, 2*self.action_size + 1, 2*self.action_size + 1), dtype=np.float32)
 
-        # highlighted_action_area = np.zeros((len(dict_obs), self.num_agents, self.map_size + 2*self.action_size, self.map_size + 2*self.action_size), dtype=np.int)
+        # highlighted_action_area = np.zeros((len(dict_obs), self.num_agents, self.map_size + 2*self.action_size, self.map_size + 2*self.action_size), dtype=np.int32)
         
-        current_agent_pos = np.zeros((len(dict_obs), self.num_agents, 2), dtype=np.int)
+        current_agent_pos = np.zeros((len(dict_obs), self.num_agents, 2), dtype=np.int32)
         agent_pos_map = np.zeros((len(dict_obs), self.num_agents, self.full_w, self.full_h), dtype=np.float32)
         type0_agent_pos_map = np.zeros((len(dict_obs), self.num_agents, self.full_w, self.full_h), dtype=np.float32) #other agents of type 0
         type1_agent_pos_map = np.zeros((len(dict_obs), self.num_agents, self.full_w, self.full_h), dtype=np.float32) #other agents of type 1
@@ -491,7 +491,7 @@ class GridWorldRunner(Runner):
             self.agent_types_list[e] = np.array(infos[e]['agent_types_list'])
         
         # one-hot agent_class_identifier
-        self.agent_class_identifier = np.zeros((self.n_rollout_threads, self.num_agents, self.n_agent_types), dtype=np.int)
+        self.agent_class_identifier = np.zeros((self.n_rollout_threads, self.num_agents, self.n_agent_types), dtype=np.int32)
         for e in range(self.n_rollout_threads):
             for agent_id in range(self.num_agents):
                 for agent_type in range(self.n_agent_types):
@@ -620,37 +620,37 @@ class GridWorldRunner(Runner):
         self.act_dim = self.envs.action_space[0].n #for discrete action space
         self.action_shape = get_shape_from_act_space(self.envs.action_space[0])
         if self.use_action_masking:
-            # self.available_actions = np.ones((self.n_rollout_threads, self.num_agents, *self.act_dim), dtype=np.int)
-            self.available_actions = np.ones((self.n_rollout_threads, self.num_agents, self.act_dim), dtype=np.int)
+            # self.available_actions = np.ones((self.n_rollout_threads, self.num_agents, *self.act_dim), dtype=np.int32)
+            self.available_actions = np.ones((self.n_rollout_threads, self.num_agents, self.act_dim), dtype=np.int32)
         else:
             self.available_actions = None
         
         # Initializing agent pos, groups and actions info
-        self.macro_action = np.zeros((self.n_rollout_threads, self.num_agents, 2), dtype=np.int)
-        self.agent_pos = np.zeros((self.n_rollout_threads, self.num_agents, 2), dtype=np.int) # based on the actual map
-        self.agent_groups = np.ones((self.n_rollout_threads, self.num_agents, self.num_agents), dtype=np.int)
-        self.agent_alive = np.ones((self.n_rollout_threads, self.num_agents), dtype=np.int)
+        self.macro_action = np.zeros((self.n_rollout_threads, self.num_agents, 2), dtype=np.int32)
+        self.agent_pos = np.zeros((self.n_rollout_threads, self.num_agents, 2), dtype=np.int32) # based on the actual map
+        self.agent_groups = np.ones((self.n_rollout_threads, self.num_agents, self.num_agents), dtype=np.int32)
+        self.agent_alive = np.ones((self.n_rollout_threads, self.num_agents), dtype=np.int32)
 
-        self.target_found = np.zeros((self.n_rollout_threads,self.num_agents), dtype=np.int)
-        # self.number_of_rubbles_known = np.zeros((self.n_rollout_threads, self.num_agents), dtype=np.int)
+        self.target_found = np.zeros((self.n_rollout_threads,self.num_agents), dtype=np.int32)
+        # self.number_of_rubbles_known = np.zeros((self.n_rollout_threads, self.num_agents), dtype=np.int32)
 
     def init_eval_map_variables(self):
         # Action Space
         self.act_dim = self.eval_envs.action_space[0].n
         self.action_shape = get_shape_from_act_space(self.eval_envs.action_space[0])
         if self.use_action_masking:
-            self.available_actions = np.ones((self.n_eval_rollout_threads, self.num_agents, self.act_dim), dtype=np.int)
+            self.available_actions = np.ones((self.n_eval_rollout_threads, self.num_agents, self.act_dim), dtype=np.int32)
         else:
             self.available_actions = None
 
         # Initializing full, merge and local map
-        self.macro_action = np.zeros((self.n_eval_rollout_threads, self.num_agents, 2), dtype=np.int)
-        self.agent_pos = np.zeros((self.n_eval_rollout_threads, self.num_agents, 2), dtype=np.int) # based on the actual map
+        self.macro_action = np.zeros((self.n_eval_rollout_threads, self.num_agents, 2), dtype=np.int32)
+        self.agent_pos = np.zeros((self.n_eval_rollout_threads, self.num_agents, 2), dtype=np.int32) # based on the actual map
         self.eval_agent_groups = np.ones((self.n_eval_rollout_threads, self.num_agents, self.num_agents), dtype=np.float32)
 
         
-        self.target_found = np.zeros((self.n_eval_rollout_threads,self.num_agents), dtype=np.int)
-        # self.number_of_rubbles_known = np.zeros((self.n_eval_rollout_threads, self.num_agents), dtype=np.int)
+        self.target_found = np.zeros((self.n_eval_rollout_threads,self.num_agents), dtype=np.int32)
+        # self.number_of_rubbles_known = np.zeros((self.n_eval_rollout_threads, self.num_agents), dtype=np.int32)
         
     
     def save_global_model(self, step):
@@ -738,7 +738,7 @@ class GridWorldRunner(Runner):
             # rnn_states_critic = np.array(np.split(_t2n(rnn_states_critic), n_threads))
 
             
-            goal = np.array(np.split(_t2n(action), n_threads)).astype(np.int)
+            goal = np.array(np.split(_t2n(action), n_threads)).astype(np.int32)
             row = goal//(2*self.action_size+1) - self.action_size
             col = goal%(2*self.action_size+1) - self.action_size
             short_term_goal = np.stack((row, col), axis=-1)
@@ -973,7 +973,7 @@ class GridWorldRunner(Runner):
                 # self.eval_rnn_states = np.array(np.split(_t2n(rnn_states), n_threads))
                         
             
-            goal = np.array(np.split(_t2n(action), n_threads)).astype(np.int)
+            goal = np.array(np.split(_t2n(action), n_threads)).astype(np.int32)
             row = goal//(2*self.action_size+1) - self.action_size
             col = goal%(2*self.action_size+1) - self.action_size
             short_term_goal = np.stack((row, col), axis=-1)
@@ -1435,7 +1435,7 @@ class GridWorldRunner(Runner):
             is_last_step = np.full((self.n_rollout_threads, self.num_agents), False)
             
             # one-hot agent_class_identifier
-            self.agent_class_identifier = np.zeros((self.n_rollout_threads, self.num_agents, self.n_agent_types), dtype=np.int)
+            self.agent_class_identifier = np.zeros((self.n_rollout_threads, self.num_agents, self.n_agent_types), dtype=np.int32)
             for e in range(self.n_rollout_threads):
                 for agent_id in range(self.num_agents):
                     for agent_type in range(self.n_agent_types):

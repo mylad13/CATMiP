@@ -657,7 +657,7 @@ class Grid:
         """
 
         if highlight_mask is None:
-            highlight_mask = np.zeros(shape=(num_agents, self.width, self.height), dtype=np.bool)
+            highlight_mask = np.zeros(shape=(num_agents, self.width, self.height), dtype=np.bool_)
 
         # Compute the total grid size
         width_px = self.width * tile_size
@@ -730,7 +730,7 @@ class Grid:
         """
 
         if highlight_mask is None:
-            highlight_mask = np.zeros(shape=(self.width, self.height), dtype=np.bool)
+            highlight_mask = np.zeros(shape=(self.width, self.height), dtype=np.bool_)
 
         # Compute the total grid size
         width_px = self.width * tile_size
@@ -794,7 +794,7 @@ class Grid:
         width, height, channels = array.shape
         assert channels == 3
 
-        vis_mask = np.ones(shape=(width, height), dtype=np.bool)
+        vis_mask = np.ones(shape=(width, height), dtype=np.bool_)
 
         grid = Grid(width, height)
         for i in range(width):
@@ -808,7 +808,7 @@ class Grid:
 
     def process_vis(grid, agent_pos):
         ################## First method is for 360 degrees lidar vision ##################
-        # mask = np.zeros(shape=(grid.width, grid.height), dtype=np.bool)
+        # mask = np.zeros(shape=(grid.width, grid.height), dtype=np.bool_)
         # agent_x = agent_pos[0]
         # agent_y = agent_pos[1]
         # mask[agent_pos[0], agent_pos[1]] = True
@@ -834,7 +834,7 @@ class Grid:
         # return mask
         
         ##################### second method is for camera vision from yang-xy20/async_mappo #####################
-        mask = np.ones(shape=(grid.width, grid.height), dtype=np.bool)
+        mask = np.ones(shape=(grid.width, grid.height), dtype=np.bool_)
 
         mask[agent_pos[0], agent_pos[1]] = True
 
@@ -1668,7 +1668,7 @@ class MiniGridEnv(gym.Env):
         if not self.see_through_walls:
             vis_mask = grid.process_vis(agent_pos=(agent_view_size // 2, agent_view_size - 1))
         else:
-            vis_mask = np.ones(shape=(grid.width, grid.height), dtype=np.bool)
+            vis_mask = np.ones(shape=(grid.width, grid.height), dtype=np.bool_)
         # ic(vis_mask)
          
         # Make it so the agent sees what it's carrying
@@ -1746,7 +1746,7 @@ class MiniGridEnv(gym.Env):
             self.window.show(block=False)
 
         # Mask of which cells to highlight
-        highlight_mask = np.zeros(shape=(self.width, self.height), dtype=np.bool)
+        highlight_mask = np.zeros(shape=(self.width, self.height), dtype=np.bool_)
 
         for agent_id in range(self.num_agents):
             if self.agent_types_list[agent_id] == 0: # actuator agents have a smaller view size

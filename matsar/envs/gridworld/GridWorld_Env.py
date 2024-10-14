@@ -103,7 +103,7 @@ class GridWorldEnv(object):
         return obs, info
 
     def step(self, actions):
-        if not np.all(actions == np.ones((self.num_agents, 1)).astype(np.int) * (-1.0)):
+        if not np.all(actions == np.ones((self.num_agents, 1)).astype(np.int32) * (-1.0)):
             obs, rewards, done, infos = self.env.step(actions)
             dones = np.array([done for agent_id in range(self.num_agents)])
         else:
