@@ -21,7 +21,7 @@ The performance of a model trained on a $20\times 20$ map with one rescuer agent
 
 
 ## Citation
-The preprint is now available on arXiv:
+The [preprint is now available on arXiv](https://arxiv.org/abs/2410.06372):
 ```
 @misc{farjadnasab2024cooperative,
     title={Cooperative and Asynchronous Transformer-based Mission Planning for Heterogeneous Teams of Mobile Robots},
