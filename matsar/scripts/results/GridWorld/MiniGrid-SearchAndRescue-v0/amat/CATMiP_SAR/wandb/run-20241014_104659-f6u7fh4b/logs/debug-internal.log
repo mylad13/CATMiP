@@ -1,0 +1,188 @@
+2024-10-14 10:46:59,510 INFO    StreamThr :3197119 [internal.py:wandb_internal():88] W&B internal server running at pid: 3197119, started at: 2024-10-14 10:46:59.510359
+2024-10-14 10:46:59,512 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: status
+2024-10-14 10:46:59,515 INFO    WriterThread:3197119 [datastore.py:open_for_write():87] open: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/run-f6u7fh4b.wandb
+2024-10-14 10:46:59,516 DEBUG   SenderThread:3197119 [sender.py:send():378] send: header
+2024-10-14 10:46:59,537 DEBUG   SenderThread:3197119 [sender.py:send():378] send: run
+2024-10-14 10:46:59,745 INFO    SenderThread:3197119 [dir_watcher.py:__init__():211] watching files in: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files
+2024-10-14 10:46:59,745 INFO    SenderThread:3197119 [sender.py:_start_run_threads():1126] run started: f6u7fh4b with start time 1728917219.510059
+2024-10-14 10:46:59,756 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: check_version
+2024-10-14 10:46:59,756 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: check_version
+2024-10-14 10:46:59,841 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: run_start
+2024-10-14 10:46:59,873 DEBUG   HandlerThread:3197119 [system_info.py:__init__():26] System info init
+2024-10-14 10:46:59,873 DEBUG   HandlerThread:3197119 [system_info.py:__init__():41] System info init done
+2024-10-14 10:46:59,873 INFO    HandlerThread:3197119 [system_monitor.py:start():194] Starting system monitor
+2024-10-14 10:46:59,874 INFO    SystemMonitor:3197119 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-10-14 10:46:59,874 INFO    HandlerThread:3197119 [system_monitor.py:probe():214] Collecting system info
+2024-10-14 10:46:59,874 INFO    SystemMonitor:3197119 [interfaces.py:start():188] Started cpu monitoring
+2024-10-14 10:46:59,875 INFO    SystemMonitor:3197119 [interfaces.py:start():188] Started disk monitoring
+2024-10-14 10:46:59,875 INFO    SystemMonitor:3197119 [interfaces.py:start():188] Started gpu monitoring
+2024-10-14 10:46:59,875 INFO    SystemMonitor:3197119 [interfaces.py:start():188] Started memory monitoring
+2024-10-14 10:46:59,876 INFO    SystemMonitor:3197119 [interfaces.py:start():188] Started network monitoring
+2024-10-14 10:46:59,910 DEBUG   HandlerThread:3197119 [system_info.py:probe():150] Probing system
+2024-10-14 10:46:59,916 DEBUG   HandlerThread:3197119 [system_info.py:_probe_git():135] Probing git
+2024-10-14 10:46:59,931 DEBUG   HandlerThread:3197119 [system_info.py:_probe_git():143] Probing git done
+2024-10-14 10:46:59,931 DEBUG   HandlerThread:3197119 [system_info.py:probe():198] Probing system done
+2024-10-14 10:46:59,931 DEBUG   HandlerThread:3197119 [system_monitor.py:probe():223] {'os': 'Linux-5.15.0-119-generic-x86_64-with-debian-bullseye-sid', 'python': '3.7.16', 'heartbeatAt': '2024-10-14T14:46:59.910645', 'startedAt': '2024-10-14T14:46:59.504482', 'docker': None, 'cuda': None, 'args': ('--env_name', 'GridWorld', '--algorithm_name', 'amat', '--experiment_name', 'CATMiP_SAR', '--scenario_name', 'MiniGrid-SearchAndRescue-v0', '--log_interval', '1', '--wandb_name', 'mylad', '--user_name', 'mylad', '--num_agents', '3', '--num_obstacles', '30', '--seed', '3', '--n_training_threads', '4', '--n_rollout_threads', '128', '--num_mini_batch', '1', '--num_env_steps', '250000000', '--ppo_epoch', '10', '--lr', '1e-4', '--use_linear_lr_decay', '--max_steps', '200', '--agent_view_size', '7', '--local_step_num', '10', '--astar_cost_mode', 'normal', '--grid_size', '20', '--use_full_comm', '--entropy_coef', '0.01', '--clip_param', '0.05', '--gamma', '1', '--asynch', '--trajectory_forget_rate', '0.9101', '--goal_history_decay', '0', '--n_head', '1', '--n_embd', '192', '--n_block', '1', '--action_size', '3', '--n_agent_types', '2', '--agent_types_list', '0', '1', '10', '--detect_traces', '--use_intrinsic_reward', '--use_action_masking'), 'state': 'running', 'program': 'train/train_gridworld.py', 'codePathLocal': 'train/train_gridworld.py', 'codePath': 'matsar/scripts/train/train_gridworld.py', 'git': {'remote': 'https://github.com/mylad13/CATMiP', 'commit': 'ae53fa94f59dac4b0c2185af5f086d5230800e4e'}, 'email': 'mfarjadnasab@gmail.com', 'root': '/home/farjadnm/CATMiP', 'host': 'pc-sirouspour14.ece.mcmaster.ca', 'username': 'farjadnm', 'executable': '/home/farjadnm/miniconda3/envs/mazelab/bin/python', 'cpu_count': 16, 'cpu_count_logical': 32, 'cpu_freq': {'current': 2396.69396875, 'min': 2200.0, 'max': 3400.0}, 'cpu_freq_per_core': [{'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2800.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 4613.511, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2195.864, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}, {'current': 2200.0, 'min': 2200.0, 'max': 3400.0}], 'disk': {'/': {'total': 937.3305015563965, 'used': 387.89240646362305}}, 'gpu': 'NVIDIA GeForce RTX 3090', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA GeForce RTX 3090', 'memory_total': 25769803776}], 'memory': {'total': 62.71286392211914}}
+2024-10-14 10:46:59,931 INFO    HandlerThread:3197119 [system_monitor.py:probe():224] Finished collecting system info
+2024-10-14 10:46:59,931 INFO    HandlerThread:3197119 [system_monitor.py:probe():227] Publishing system info
+2024-10-14 10:46:59,931 DEBUG   HandlerThread:3197119 [system_info.py:_save_conda():208] Saving list of conda packages installed into the current environment
+2024-10-14 10:47:00,747 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/conda-environment.yaml
+2024-10-14 10:47:01,452 DEBUG   HandlerThread:3197119 [system_info.py:_save_conda():222] Saving conda packages done
+2024-10-14 10:47:01,452 INFO    HandlerThread:3197119 [system_monitor.py:probe():229] Finished publishing system info
+2024-10-14 10:47:01,455 DEBUG   SenderThread:3197119 [sender.py:send():378] send: files
+2024-10-14 10:47:01,455 INFO    SenderThread:3197119 [sender.py:_save_file():1389] saving file wandb-metadata.json with policy now
+2024-10-14 10:47:01,496 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: python_packages
+2024-10-14 10:47:01,497 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: python_packages
+2024-10-14 10:47:01,498 DEBUG   SenderThread:3197119 [sender.py:send():378] send: telemetry
+2024-10-14 10:47:01,544 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-14 10:47:01,545 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: stop_status
+2024-10-14 10:47:01,746 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/conda-environment.yaml
+2024-10-14 10:47:01,746 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/requirements.txt
+2024-10-14 10:47:01,746 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/wandb-metadata.json
+2024-10-14 10:47:01,752 INFO    wandb-upload_0:3197119 [upload_job.py:push():130] Uploaded file /tmp/tmprdrffdyzwandb/cnmzkso0-wandb-metadata.json
+2024-10-14 10:47:04,595 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: status_report
+2024-10-14 10:47:08,514 DEBUG   SenderThread:3197119 [sender.py:send():378] send: exit
+2024-10-14 10:47:08,515 INFO    SenderThread:3197119 [sender.py:send_exit():585] handling exit code: 1
+2024-10-14 10:47:08,515 INFO    SenderThread:3197119 [sender.py:send_exit():587] handling runtime: 8
+2024-10-14 10:47:08,515 INFO    SenderThread:3197119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-14 10:47:08,515 INFO    SenderThread:3197119 [sender.py:send_exit():593] send defer
+2024-10-14 10:47:08,517 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,517 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 0
+2024-10-14 10:47:08,517 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,517 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 0
+2024-10-14 10:47:08,517 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 1
+2024-10-14 10:47:08,518 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,518 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 1
+2024-10-14 10:47:08,518 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,518 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 1
+2024-10-14 10:47:08,518 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 2
+2024-10-14 10:47:08,518 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,518 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 2
+2024-10-14 10:47:08,518 INFO    HandlerThread:3197119 [system_monitor.py:finish():203] Stopping system monitor
+2024-10-14 10:47:08,518 DEBUG   SystemMonitor:3197119 [system_monitor.py:_start():172] Starting system metrics aggregation loop
+2024-10-14 10:47:08,518 DEBUG   SystemMonitor:3197119 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-10-14 10:47:08,518 DEBUG   SystemMonitor:3197119 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-10-14 10:47:08,519 INFO    HandlerThread:3197119 [interfaces.py:finish():200] Joined cpu monitor
+2024-10-14 10:47:08,519 INFO    HandlerThread:3197119 [interfaces.py:finish():200] Joined disk monitor
+2024-10-14 10:47:08,750 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/output.log
+2024-10-14 10:47:08,750 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/wandb-summary.json
+2024-10-14 10:47:08,873 INFO    HandlerThread:3197119 [interfaces.py:finish():200] Joined gpu monitor
+2024-10-14 10:47:08,873 INFO    HandlerThread:3197119 [interfaces.py:finish():200] Joined memory monitor
+2024-10-14 10:47:08,873 INFO    HandlerThread:3197119 [interfaces.py:finish():200] Joined network monitor
+2024-10-14 10:47:08,874 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,874 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 2
+2024-10-14 10:47:08,874 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 3
+2024-10-14 10:47:08,874 DEBUG   SenderThread:3197119 [sender.py:send():378] send: stats
+2024-10-14 10:47:08,874 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,874 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 3
+2024-10-14 10:47:08,874 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,874 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 3
+2024-10-14 10:47:08,874 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 4
+2024-10-14 10:47:08,878 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,878 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 4
+2024-10-14 10:47:08,878 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,878 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 4
+2024-10-14 10:47:08,878 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 5
+2024-10-14 10:47:08,878 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,878 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 5
+2024-10-14 10:47:08,878 DEBUG   SenderThread:3197119 [sender.py:send():378] send: summary
+2024-10-14 10:47:08,879 INFO    SenderThread:3197119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-14 10:47:08,879 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,879 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 5
+2024-10-14 10:47:08,879 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 6
+2024-10-14 10:47:08,879 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,879 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 6
+2024-10-14 10:47:08,879 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,879 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 6
+2024-10-14 10:47:08,884 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: status_report
+2024-10-14 10:47:08,970 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 7
+2024-10-14 10:47:08,977 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:08,977 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 7
+2024-10-14 10:47:08,984 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:08,985 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 7
+2024-10-14 10:47:09,501 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-14 10:47:09,750 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/config.yaml
+2024-10-14 10:47:09,751 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/wandb-summary.json
+2024-10-14 10:47:10,519 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 8
+2024-10-14 10:47:10,519 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: poll_exit
+2024-10-14 10:47:10,519 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:10,519 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 8
+2024-10-14 10:47:10,521 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:10,521 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 8
+2024-10-14 10:47:10,521 INFO    SenderThread:3197119 [job_builder.py:build():432] Attempting to build job artifact
+2024-10-14 10:47:10,522 INFO    SenderThread:3197119 [job_builder.py:_get_source_type():565] is repo sourced job
+2024-10-14 10:47:10,597 INFO    SenderThread:3197119 [job_builder.py:build():541] adding wandb-job metadata file
+2024-10-14 10:47:10,603 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 9
+2024-10-14 10:47:10,604 DEBUG   SenderThread:3197119 [sender.py:send():378] send: artifact
+2024-10-14 10:47:10,604 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:10,606 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 9
+2024-10-14 10:47:10,751 INFO    Thread-12 :3197119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/output.log
+2024-10-14 10:47:11,502 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-14 10:47:11,612 INFO    wandb-upload_1:3197119 [upload_job.py:push():88] Uploaded file /tmp/tmp8go40vqs/wandb-job.json
+2024-10-14 10:47:11,657 INFO    wandb-upload_0:3197119 [upload_job.py:push():88] Uploaded file /home/farjadnm/.local/share/wandb/artifacts/staging/tmpmxxdix8r
+2024-10-14 10:47:13,053 INFO    SenderThread:3197119 [sender.py:send_artifact():1467] sent artifact job-https___github.com_mylad13_CATMiP_matsar_scripts_train_train_gridworld.py - {'id': 'QXJ0aWZhY3Q6MTI4MDcyMjE4Mw==', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQ3NzMzOTM4Ng==', 'latestArtifact': None}}
+2024-10-14 10:47:13,053 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:13,053 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 9
+2024-10-14 10:47:13,053 INFO    SenderThread:3197119 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-10-14 10:47:13,752 INFO    SenderThread:3197119 [dir_watcher.py:finish():388] scan: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files
+2024-10-14 10:47:13,753 INFO    SenderThread:3197119 [dir_watcher.py:finish():402] scan save: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/wandb-metadata.json wandb-metadata.json
+2024-10-14 10:47:13,753 INFO    SenderThread:3197119 [dir_watcher.py:finish():402] scan save: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/conda-environment.yaml conda-environment.yaml
+2024-10-14 10:47:13,753 INFO    SenderThread:3197119 [dir_watcher.py:finish():402] scan save: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/config.yaml config.yaml
+2024-10-14 10:47:13,756 INFO    SenderThread:3197119 [dir_watcher.py:finish():402] scan save: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/requirements.txt requirements.txt
+2024-10-14 10:47:13,757 INFO    SenderThread:3197119 [dir_watcher.py:finish():402] scan save: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/wandb-summary.json wandb-summary.json
+2024-10-14 10:47:13,762 INFO    SenderThread:3197119 [dir_watcher.py:finish():402] scan save: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/output.log output.log
+2024-10-14 10:47:13,762 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 10
+2024-10-14 10:47:13,765 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: poll_exit
+2024-10-14 10:47:13,765 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:13,766 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 10
+2024-10-14 10:47:13,767 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:13,767 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 10
+2024-10-14 10:47:13,767 INFO    SenderThread:3197119 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-14 10:47:13,951 INFO    wandb-upload_2:3197119 [upload_job.py:push():130] Uploaded file /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/conda-environment.yaml
+2024-10-14 10:47:13,961 INFO    wandb-upload_5:3197119 [upload_job.py:push():130] Uploaded file /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/requirements.txt
+2024-10-14 10:47:14,009 INFO    wandb-upload_3:3197119 [upload_job.py:push():130] Uploaded file /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/output.log
+2024-10-14 10:47:14,014 INFO    wandb-upload_4:3197119 [upload_job.py:push():130] Uploaded file /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/config.yaml
+2024-10-14 10:47:14,039 INFO    wandb-upload_6:3197119 [upload_job.py:push():130] Uploaded file /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/files/wandb-summary.json
+2024-10-14 10:47:14,239 INFO    Thread-11 :3197119 [sender.py:transition_state():613] send defer: 11
+2024-10-14 10:47:14,239 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:14,239 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 11
+2024-10-14 10:47:14,240 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:14,240 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 11
+2024-10-14 10:47:14,240 INFO    SenderThread:3197119 [file_pusher.py:join():175] waiting for file pusher
+2024-10-14 10:47:14,240 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 12
+2024-10-14 10:47:14,240 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:14,240 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 12
+2024-10-14 10:47:14,240 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:14,240 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 12
+2024-10-14 10:47:14,241 INFO    SenderThread:3197119 [file_stream.py:finish():601] file stream finish called
+2024-10-14 10:47:14,303 INFO    SenderThread:3197119 [file_stream.py:finish():605] file stream finish is done
+2024-10-14 10:47:14,303 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 13
+2024-10-14 10:47:14,303 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:14,303 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 13
+2024-10-14 10:47:14,303 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:14,303 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 13
+2024-10-14 10:47:14,303 INFO    SenderThread:3197119 [sender.py:transition_state():613] send defer: 14
+2024-10-14 10:47:14,304 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: defer
+2024-10-14 10:47:14,304 DEBUG   SenderThread:3197119 [sender.py:send():378] send: final
+2024-10-14 10:47:14,304 INFO    HandlerThread:3197119 [handler.py:handle_request_defer():184] handle defer: 14
+2024-10-14 10:47:14,304 DEBUG   SenderThread:3197119 [sender.py:send():378] send: footer
+2024-10-14 10:47:14,304 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: defer
+2024-10-14 10:47:14,304 INFO    SenderThread:3197119 [sender.py:send_request_defer():609] handle sender defer: 14
+2024-10-14 10:47:14,305 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-14 10:47:14,305 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: poll_exit
+2024-10-14 10:47:14,305 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-14 10:47:14,305 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: poll_exit
+2024-10-14 10:47:14,306 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: server_info
+2024-10-14 10:47:14,306 DEBUG   SenderThread:3197119 [sender.py:send_request():405] send_request: server_info
+2024-10-14 10:47:14,308 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: get_summary
+2024-10-14 10:47:14,308 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: sampled_history
+2024-10-14 10:47:14,309 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-14 10:47:14,350 INFO    MainThread:3197119 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2024-10-14 10:47:14,350 INFO    MainThread:3197119 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2024-10-14 10:47:14,350 INFO    MainThread:3197119 [wandb_run.py:_footer_sync_info():3953] logging synced files
+2024-10-14 10:47:14,350 DEBUG   HandlerThread:3197119 [handler.py:handle_request():158] handle_request: shutdown
+2024-10-14 10:47:14,350 INFO    HandlerThread:3197119 [handler.py:finish():882] shutting down handler
+2024-10-14 10:47:15,306 INFO    WriterThread:3197119 [datastore.py:close():296] close: /home/farjadnm/CATMiP/matsar/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/CATMiP_SAR/wandb/run-20241014_104659-f6u7fh4b/run-f6u7fh4b.wandb
+2024-10-14 10:47:15,350 INFO    SenderThread:3197119 [sender.py:finish():1545] shutting down sender
+2024-10-14 10:47:15,350 INFO    SenderThread:3197119 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-14 10:47:15,350 INFO    SenderThread:3197119 [file_pusher.py:join():175] waiting for file pusher

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "train/train_gridworld.py", line 198, in <module>
+    main(sys.argv[1:])
+  File "train/train_gridworld.py", line 156, in main
+    envs = make_train_env(all_args)
+  File "train/train_gridworld.py", line 33, in make_train_env
+    return InfoSubprocVecEnv([get_env_fn(i) for i in range(all_args.n_rollout_threads)])
+  File "/home/farjadnm/Het-TeamSAR/matsar/envs/env_wrappers.py", line 479, in __init__
+    observation_space, share_observation_space, action_space = self.remotes[0].recv(
+  File "/home/farjadnm/miniconda3/envs/mazelab/lib/python3.7/multiprocessing/connection.py", line 250, in recv
+    buf = self._recv_bytes()
+  File "/home/farjadnm/miniconda3/envs/mazelab/lib/python3.7/multiprocessing/connection.py", line 407, in _recv_bytes
+    buf = self._recv(4)
+  File "/home/farjadnm/miniconda3/envs/mazelab/lib/python3.7/multiprocessing/connection.py", line 379, in _recv
+    chunk = read(handle, remaining)
+ConnectionResetError: [Errno 104] Connection reset by peer

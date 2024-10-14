@@ -1,0 +1,354 @@
+wandb_version: 1
+
+algorithm_name:
+  desc: null
+  value: amat
+experiment_name:
+  desc: null
+  value: CATMiP_SAR
+seed:
+  desc: null
+  value: 3
+cuda:
+  desc: null
+  value: true
+cuda_deterministic:
+  desc: null
+  value: true
+n_training_threads:
+  desc: null
+  value: 4
+n_rollout_threads:
+  desc: null
+  value: 128
+n_eval_rollout_threads:
+  desc: null
+  value: 1
+n_render_rollout_threads:
+  desc: null
+  value: 1
+num_env_steps:
+  desc: null
+  value: 250000000
+user_name:
+  desc: null
+  value: mylad
+wandb_name:
+  desc: null
+  value: mylad
+use_wandb:
+  desc: null
+  value: true
+env_name:
+  desc: null
+  value: GridWorld
+episode_length:
+  desc: null
+  value: 200
+share_policy:
+  desc: null
+  value: true
+use_centralized_V:
+  desc: null
+  value: true
+stacked_frames:
+  desc: null
+  value: 1
+use_stacked_frames:
+  desc: null
+  value: false
+hidden_size:
+  desc: null
+  value: 64
+layer_N:
+  desc: null
+  value: 2
+use_ReLU:
+  desc: null
+  value: true
+use_popart:
+  desc: null
+  value: false
+use_valuenorm:
+  desc: null
+  value: true
+use_feature_normalization:
+  desc: null
+  value: true
+use_orthogonal:
+  desc: null
+  value: true
+gain:
+  desc: null
+  value: 0.01
+use_naive_recurrent_policy:
+  desc: null
+  value: false
+use_recurrent_policy:
+  desc: null
+  value: false
+recurrent_N:
+  desc: null
+  value: 1
+data_chunk_length:
+  desc: null
+  value: 10
+lr:
+  desc: null
+  value: 0.0001
+tau:
+  desc: null
+  value: 0.995
+critic_lr:
+  desc: null
+  value: 0.0005
+opti_eps:
+  desc: null
+  value: 1.0e-05
+weight_decay:
+  desc: null
+  value: 0
+ppo_epoch:
+  desc: null
+  value: 10
+use_policy_vhead:
+  desc: null
+  value: false
+use_clipped_value_loss:
+  desc: null
+  value: true
+clip_param:
+  desc: null
+  value: 0.05
+num_mini_batch:
+  desc: null
+  value: 1
+policy_value_loss_coef:
+  desc: null
+  value: 1
+entropy_coef:
+  desc: null
+  value: 0.01
+value_loss_coef:
+  desc: null
+  value: 1
+use_max_grad_norm:
+  desc: null
+  value: true
+max_grad_norm:
+  desc: null
+  value: 10.0
+use_gae:
+  desc: null
+  value: true
+gamma:
+  desc: null
+  value: 1.0
+gae_lambda:
+  desc: null
+  value: 0.95
+use_proper_time_limits:
+  desc: null
+  value: false
+use_huber_loss:
+  desc: null
+  value: true
+use_value_active_masks:
+  desc: null
+  value: true
+use_policy_active_masks:
+  desc: null
+  value: true
+huber_delta:
+  desc: null
+  value: 10.0
+aux_epoch:
+  desc: null
+  value: 5
+clone_coef:
+  desc: null
+  value: 1.0
+use_single_network:
+  desc: null
+  value: false
+use_linear_lr_decay:
+  desc: null
+  value: true
+save_interval:
+  desc: null
+  value: 1
+log_interval:
+  desc: null
+  value: 1
+use_eval:
+  desc: null
+  value: false
+eval_interval:
+  desc: null
+  value: 25
+eval_episodes:
+  desc: null
+  value: 32
+save_gifs:
+  desc: null
+  value: false
+use_render:
+  desc: null
+  value: false
+render_episodes:
+  desc: null
+  value: 5
+ifi:
+  desc: null
+  value: 0.1
+model_dir:
+  desc: null
+  value: null
+encode_state:
+  desc: null
+  value: false
+n_block:
+  desc: null
+  value: 1
+n_embd:
+  desc: null
+  value: 192
+n_embd_vit:
+  desc: null
+  value: 48
+n_head:
+  desc: null
+  value: 1
+dec_actor:
+  desc: null
+  value: false
+share_actor:
+  desc: null
+  value: false
+embed_hidden_size:
+  desc: null
+  value: 64
+train_maps:
+  desc: null
+  value: null
+eval_maps:
+  desc: null
+  value: null
+trajectory_forget_rate:
+  desc: null
+  value: 0.9101
+goal_history_decay:
+  desc: null
+  value: 0.0
+path_prediction_decay:
+  desc: null
+  value: 0.8
+detect_traces:
+  desc: null
+  value: true
+action_size:
+  desc: null
+  value: 3
+use_action_masking:
+  desc: null
+  value: true
+n_agent_types:
+  desc: null
+  value: 2
+agent_types_list:
+  desc: null
+  value:
+  - 0
+  - 1
+  - 10
+use_full_comm:
+  desc: null
+  value: true
+use_partial_comm:
+  desc: null
+  value: false
+com_sigma:
+  desc: null
+  value: 10
+block_doors:
+  desc: null
+  value: false
+block_chance:
+  desc: null
+  value: 0.25
+asynch:
+  desc: null
+  value: true
+scenario_name:
+  desc: null
+  value: MiniGrid-SearchAndRescue-v0
+num_agents:
+  desc: null
+  value: 3
+num_obstacles:
+  desc: null
+  value: 30
+agent_pos:
+  desc: null
+  value: null
+grid_size:
+  desc: null
+  value: 20
+agent_view_size:
+  desc: null
+  value: 7
+max_steps:
+  desc: null
+  value: 200
+local_step_num:
+  desc: null
+  value: 10
+use_same_location:
+  desc: null
+  value: false
+use_time_penalty:
+  desc: null
+  value: false
+use_energy_penalty:
+  desc: null
+  value: false
+use_intrinsic_reward:
+  desc: null
+  value: true
+use_orientation:
+  desc: null
+  value: false
+use_agent_obstacle:
+  desc: null
+  value: false
+use_time:
+  desc: null
+  value: false
+max_timestep:
+  desc: null
+  value: 200.0
+_wandb:
+  desc: null
+  value:
+    python_version: 3.7.16
+    cli_version: 0.17.0
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1728917219
+    t:
+      1:
+      - 1
+      - 55
+      2:
+      - 1
+      - 55
+      3:
+      - 13
+      - 16
+      - 23
+      4: 3.7.16
+      5: 0.17.0
+      8:
+      - 5
+      13: linux-x86_64
