@@ -21,5 +21,14 @@ The performance of a model trained on a $20\times 20$ map with one rescuer agent
 
 
 ## Citation
-The paper for this work will be available very soon!!
-Authors: Milad Farjadnasab, Shahin Sirouspour
+The preprint is now available on arXiv:
+```
+@misc{farjadnasab2024cooperative,
+    title={Cooperative and Asynchronous Transformer-based Mission Planning for Heterogeneous Teams of Mobile Robots},
+    author={Milad Farjadnasab and Shahin Sirouspour},
+    year={2024},
+    eprint={2410.06372},
+    archivePrefix={arXiv},
+    primaryClass={cs.RO}
+}
+```
