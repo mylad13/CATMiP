@@ -51,7 +51,7 @@ class GridWorldRunner(Runner):
             period_rewards = np.zeros((self.n_rollout_threads, self.num_agents, 1))
             auc_area = np.zeros((self.n_rollout_threads, self.max_steps), dtype=np.float32)
             auc_single_area = np.zeros((self.n_rollout_threads, self.num_agents, self.max_steps), dtype=np.float32)
-            self.done_envs = np.zeros((self.n_rollout_threads,)).astype(np.bool_)
+            self.done_envs = np.zeros((self.n_rollout_threads,)).astype(bool)
             is_last_step = np.full((self.n_rollout_threads, self.num_agents), False)
             if self.use_linear_lr_decay:
                 self.trainer.policy.lr_decay(episode, episodes)

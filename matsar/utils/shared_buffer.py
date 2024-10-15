@@ -120,7 +120,7 @@ class SharedReplayBuffer(object):
         self.update_step_masks[0] = 1
         self.active_steps = np.zeros((self.episode_length + 1, self.n_rollout_threads, num_agents, 1), dtype=np.int32)
         self.agent_steps = np.zeros((self.episode_length + 1, self.n_rollout_threads, num_agents, 1), dtype=np.int32)
-        self.was_agent_active = np.full((self.episode_length + 1, self.n_rollout_threads, num_agents), False, dtype=np.bool_)
+        self.was_agent_active = np.full((self.episode_length + 1, self.n_rollout_threads, num_agents), False, dtype=bool)
         self.was_agent_active[0] = True
 
         self.agent_groups = np.ones((self.episode_length + 1, self.n_rollout_threads, num_agents, num_agents), dtype=np.int32)
@@ -189,7 +189,7 @@ class SharedReplayBuffer(object):
         
             self.active_steps[agent_step + 1 , e, a] = (self.step + 1) * self.masks[agent_step + 1, e, a] # saving each agent's corresponding update step
             self.agent_steps[self.step + 1 , e, a] = (agent_step + 1 ) * self.masks[agent_step + 1, e, a]
-            self.was_agent_active[self.step + 1 , e, a] = True * self.masks[agent_step + 1, e, a].astype(np.bool_)
+            self.was_agent_active[self.step + 1 , e, a] = True * self.masks[agent_step + 1, e, a].astype(bool)
             self.update_step[e, a] = agent_step 
             self.update_step_masks[agent_step , e, a] = 1
 
@@ -220,7 +220,7 @@ class SharedReplayBuffer(object):
             self.masks[0] = 1
             self.bad_masks = np.ones_like(self.masks)
             self.active_masks = np.ones_like(self.masks)
-            self.was_agent_active = np.full((self.episode_length + 1, self.n_rollout_threads, self.num_agents), False, dtype=np.bool_)
+            self.was_agent_active = np.full((self.episode_length + 1, self.n_rollout_threads, self.num_agents), False, dtype=bool)
             self.was_agent_active[0] = True
             
 
