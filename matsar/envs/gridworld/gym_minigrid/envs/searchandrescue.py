@@ -786,23 +786,6 @@ class SearchAndRescueEnv(MultiRoomEnv):
                             self.agent_groups[i,j] = 1
                             self.agent_groups[j,i] = 1
                                     
-
-        def weight_exploration_rewards(map): # function to give weight to cells that are between target and main agent
-            # UPDATE: changed this to give weight to cells that are a radius around the target
-            nonzero_indices = np.nonzero(map)
-            weighted_map = map.copy()
-            
-            for i,j in zip(nonzero_indices[0], nonzero_indices[1]):
-                dist_to_target = self._l1_distance_ratio([i,j], self.current_target_pos)
-                # Calculate the Gaussian weight
-                sigma = 0.5  # Sigma value of the Gaussian function
-                weight = np.exp(-(dist_to_target) ** 2 / (2 * sigma ** 2))
-                weight *= 2 # Scaling the weight so that rewards are not insignificant
-                # Modify the grid cell value with the calculated weight
-                weighted_map[i,j] *=  weight
-                
-            return weighted_map
-        
         for i in range(self.num_agents):
             if not self.agent_alive[i]:
                 continue
