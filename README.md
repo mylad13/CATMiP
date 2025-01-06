@@ -16,7 +16,7 @@ The performance of a model trained on a $20\times 20$ map with one rescuer agent
 
 | <img src="./hetmarl/docs/Task1.gif" width="175" height="175" /> | <img src="./hetmarl/docs/Task2.gif" width="220" height="220" /> | <img src="./hetmarl/docs/Task3.gif" width="330" height="330" />
 |:--:| :--:| :--:| 
-| Task 1: One rescuer and one explorer agent in a $15 \times 15$ map. | Task 2: One rescuer, one explorer, and one randomly assigned agent in a $20 \times 20$ map. | Task 3: Two rescuers, four explorers, and two randomly assigned agents in a $32\times 32$ map. |
+| Task 1: One rescuer and one explorer agent in a $15 \times 15$ map. | Task 2: One rescuer, one explorer, and one randomly assigned agent in a $20 \times 20$ map. | Task 3: Two rescuers (red and blue) and four explorers in a $32\times 32$ map. |
 
 
 
