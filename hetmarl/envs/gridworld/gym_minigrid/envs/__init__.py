@@ -1,0 +1,23 @@
+# from hetmarl.envs.gridworld.gym_minigrid.envs.empty import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.doorkey import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.multiroom import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.fetch import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.gotoobject import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.gotodoor import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.putnear import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.lockedroom import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.keycorridor import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.unlock import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.unlockpickup import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.blockedunlockpickup import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.playground_v0 import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.redbluedoors import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.obstructedmaze import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.memory import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.fourrooms import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.crossing import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.lavagap import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.dynamicobstacles import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.distshift import *
+# from hetmarl.envs.gridworld.gym_minigrid.envs.human import *
+from hetmarl.envs.gridworld.gym_minigrid.envs.searchandrescue import *
