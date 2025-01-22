@@ -10,7 +10,7 @@ Similar to training, you could run `sh render_gridworld.sh` in directory [hetmar
 
 ## Results
 
-The performance of a model trained on a $20\times 20$ map with one rescuer agent, one explorer agent, and one randomly assigned agent per episode is visualized on the three tasks with different map sizes and team compositions, as described in the paper. The model was trained for 62500 episodes, and can still achieve better results if trained for longer.
+The performance of a model trained on a $20\times 20$ map with one rescuer agent, one explorer agent, and one randomly assigned agent per episode is visualized on the three tasks with different map sizes and team compositions, as described in the paper. The model was trained for 62500 episodes.
 
 
 
