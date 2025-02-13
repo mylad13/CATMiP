@@ -138,10 +138,10 @@ class Encoder(nn.Module):
         global_input_channel = obs_dim['global_agent_map'].shape[0]
         global_input_width = obs_dim['global_agent_map'].shape[1]
         global_input_height = obs_dim['global_agent_map'].shape[2]
-        fixed_width = 8
-        fixed_height = 8
+        fixed_width = 4
+        fixed_height = 4
 
-        global_out_channel1 = 32
+        global_out_channel1 = 64
         global_out_channel2 = 16
         global_out_channel3 = 16
 
@@ -213,7 +213,7 @@ class Encoder(nn.Module):
         local_flattened_size3 = local_out_channel3*local_out_image_size3
 
         local_hidden_size1 = n_embd
-        hidden_size1 = n_embd        
+        hidden_size1 = 2*n_embd        
 
         print("local_flattened_size2 is: ", local_flattened_size2)
         print("global_flattened_size1 is: ", global_flattened_size1)
