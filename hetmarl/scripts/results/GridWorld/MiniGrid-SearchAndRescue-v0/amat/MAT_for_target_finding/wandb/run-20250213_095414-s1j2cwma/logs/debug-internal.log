@@ -1,0 +1,15 @@
+{"time":"2025-02-13T09:54:14.457746256-05:00","level":"INFO","msg":"stream: starting","core version":"0.19.6","symlink path":"/home/farjadnm/CATMiP/hetmarl/scripts/results/GridWorld/MiniGrid-SearchAndRescue-v0/amat/MAT_for_target_finding/wandb/run-20250213_095414-s1j2cwma/logs/debug-core.log"}
+{"time":"2025-02-13T09:54:14.561325719-05:00","level":"INFO","msg":"created new stream","id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:14.561351608-05:00","level":"INFO","msg":"stream: started","id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:14.561369601-05:00","level":"INFO","msg":"handler: started","stream_id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:14.561368249-05:00","level":"INFO","msg":"writer: Do: started","stream_id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:14.561427661-05:00","level":"INFO","msg":"sender: started","stream_id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:14.705271369-05:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-13T09:54:45.8397638-05:00","level":"INFO","msg":"stream: closing","id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:45.839783627-05:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-02-13T09:54:45.840479366-05:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-02-13T09:54:46.174091985-05:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-02-13T09:54:46.268875821-05:00","level":"INFO","msg":"handler: closed","stream_id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:46.268911649-05:00","level":"INFO","msg":"writer: Close: closed","stream_id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:46.268918632-05:00","level":"INFO","msg":"sender: closed","stream_id":"s1j2cwma"}
+{"time":"2025-02-13T09:54:46.269001989-05:00","level":"INFO","msg":"stream: closed","id":"s1j2cwma"}

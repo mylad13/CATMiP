@@ -1,5 +1,14 @@
 Pytorch implementation of the paper "Cooperative and Asynchronous Transformer-based Mission Planning for Heterogeneous Teams of Mobile Robots". 
 
+## Installation
+
+Using conda:
+```
+conda create -n catmip python=3.9
+pip3 install -r requirements.txt
+```
+*Note:* If you're getting this error: "AssertionError: action space does not inherit from `gym.spaces.Space`, actual type: <class 'list'>", simply remove or comment that line from "gym/utils/passive_env_checker.py". You can do the same to get rid of any warnings as well.
+
 ## Training
 
 You could start training with by running `sh train_gridworld.sh` in directory [hetmarl/scripts](hetmarl/scripts). 
