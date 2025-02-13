@@ -323,9 +323,6 @@ class GridWorldRunner(Runner):
                                    current_agent_pos[e,agent_id][1]] = 1
                     global_agent_pos_map[e, agent_id, current_agent_pos[e,agent_id][0]-1:current_agent_pos[e,agent_id][0]+2,
                                    current_agent_pos[e,agent_id][1]-1:current_agent_pos[e,agent_id][1]+2] = 1
-                    # for trace_cell in infos[e]['all_trace_set']:
-                    #     target_all_map[e, trace_cell[1]+self.agent_view_size-1: trace_cell[1]+self.agent_view_size+2,
-                    #                 trace_cell[0]+self.agent_view_size-1:trace_cell[0]+self.agent_view_size+2] = 0.25
                     # for target_cell in infos[e]['all_target_set']:
                     #     target_all_map[e, target_cell[1]+self.agent_view_size-1: target_cell[1]+self.agent_view_size+2,
                     #                 target_cell[0]+self.agent_view_size-1:target_cell[0]+self.agent_view_size+2] = 1
@@ -373,8 +370,6 @@ class GridWorldRunner(Runner):
                     #                                                 self.agent_view_size:self.full_h - self.agent_view_size]
                     obs['global_agent_map'][e, agent_id, 3] = global_agent_pos_map[e, agent_id][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
-                    # obs['global_agent_map'][e, agent_id, 5] = highlighted_action_area[e, agent_id][self.action_size:self.map_size + self.action_size,
-                    #                                                                                  self.action_size:self.map_size + self.action_size]
                     obs['global_agent_map'][e, agent_id, 4] = global_type0_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                     obs['global_agent_map'][e, agent_id, 5] = global_type1_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -
@@ -475,8 +470,6 @@ class GridWorldRunner(Runner):
                     #                                                                         self.agent_view_size:self.full_h - self.agent_view_size]                    
                     obs['global_agent_map'][e, agent_id, 3] = global_agent_pos_map[e, agent_id][self.agent_view_size:self.full_w -
                                                                                    self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
-                    # obs['global_agent_map'][e, agent_id, 5] = highlighted_action_area[e, agent_id][self.action_size:self.map_size + self.action_size,
-                    #                                                                                  self.action_size:self.map_size + self.action_size]
                     obs['global_agent_map'][e, agent_id, 4] = global_type0_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -
                                                                                    self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                     obs['global_agent_map'][e, agent_id, 5] = global_type1_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -

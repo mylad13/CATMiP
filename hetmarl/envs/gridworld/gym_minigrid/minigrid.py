@@ -807,69 +807,69 @@ class Grid:
         return grid, vis_mask
 
     def process_vis(grid, agent_pos):
-        ################## First method is for 360 degrees lidar vision ##################
-        # mask = np.zeros(shape=(grid.width, grid.height), dtype=bool)
-        # agent_x = agent_pos[0]
-        # agent_y = agent_pos[1]
-        # mask[agent_pos[0], agent_pos[1]] = True
+        ################# First method is for 360 degrees lidar vision ##################
+        mask = np.zeros(shape=(grid.width, grid.height), dtype=bool)
+        agent_x = agent_pos[0]
+        agent_y = agent_pos[1]
+        mask[agent_pos[0], agent_pos[1]] = True
 
         # local_map = grid.encode()[:, :, 0] #saves the object types
         
-        # visible_cells = []
-        # for j in range(grid.height):
-        #     cells_on_line = bresenham_line(agent_x, agent_y, 0, j) # left column
-        #     visible_cells += check_visibility(cells_on_line, grid)
-        #     cells_on_line = bresenham_line(agent_x, agent_y, grid.width-1, j) # right column
-        #     visible_cells += check_visibility(cells_on_line, grid)
-        # # ic(visible_cells)
-        # for i in range(grid.width):
-        #     cells_on_line = bresenham_line(agent_x, agent_y, i, 0) # top row
-        #     visible_cells += check_visibility(cells_on_line, grid)
-        #     cells_on_line = bresenham_line(agent_x, agent_y, i, grid.height-1) # bottom row
-        #     visible_cells += check_visibility(cells_on_line, grid)
+        visible_cells = []
+        for j in range(grid.height):
+            cells_on_line = bresenham_line(agent_x, agent_y, 0, j) # left column
+            visible_cells += check_visibility(cells_on_line, grid)
+            cells_on_line = bresenham_line(agent_x, agent_y, grid.width-1, j) # right column
+            visible_cells += check_visibility(cells_on_line, grid)
+        # ic(visible_cells)
+        for i in range(grid.width):
+            cells_on_line = bresenham_line(agent_x, agent_y, i, 0) # top row
+            visible_cells += check_visibility(cells_on_line, grid)
+            cells_on_line = bresenham_line(agent_x, agent_y, i, grid.height-1) # bottom row
+            visible_cells += check_visibility(cells_on_line, grid)
             
-        # for cell in visible_cells:
-        #     mask[cell[0], cell[1]] = True
+        for cell in visible_cells:
+            mask[cell[0], cell[1]] = True
         
-        # return mask
-        
-        ##################### second method is for camera vision from yang-xy20/async_mappo #####################
-        mask = np.ones(shape=(grid.width, grid.height), dtype=bool)
-
-        mask[agent_pos[0], agent_pos[1]] = True
-
-        local_map = grid.encode()[:, :, 0]
-
-        for j in range(grid.height):
-            for i in range(agent_pos[0]-1, -1, -1):
-                if local_map[i, j] != 20 and local_map[i, j] != 60:
-                    if j == grid.height-1:
-                        mask[:i+1, :j+1] = False
-                    else:
-                        mask[:i+1, :j] = False
-                    for h in range(j+1):
-                        if local_map[i, h] != 0 and (local_map[i+1:agent_pos[0]+1, j].all() == 20 or local_map[i+1:agent_pos[0]+1, j].all() == 60):
-                            mask[i, h] = True
-                    break
-
-        for j in range(grid.height):
-            for i in range(agent_pos[0]+1, grid.width):
-                if local_map[i, j] != 20 and local_map[i, j] != 60:
-                    if j == grid.height-1:
-                        mask[i:, :j+1] = False
-                    else:
-                        mask[i:, :j] = False
-                    for h in range(j+1):
-                        if local_map[i, h] != 0 and (local_map[agent_pos[0]:i, j].all() == 20 or local_map[agent_pos[0]:i, j].all() == 60):
-                            mask[i, h] = True
-                    break
-
-        for j in range(agent_pos[1]-1, -1, -1):
-            if local_map[agent_pos[0], j] != 20 and local_map[agent_pos[0], j] != 60:
-                mask[agent_pos[0], :j] = False
-                break
-
         return mask
+        
+        # ##################### second method is for camera vision from yang-xy20/async_mappo #####################
+        # mask = np.ones(shape=(grid.width, grid.height), dtype=bool)
+
+        # mask[agent_pos[0], agent_pos[1]] = True
+
+        # local_map = grid.encode()[:, :, 0]
+
+        # for j in range(grid.height):
+        #     for i in range(agent_pos[0]-1, -1, -1):
+        #         if local_map[i, j] != 20 and local_map[i, j] != 60:
+        #             if j == grid.height-1:
+        #                 mask[:i+1, :j+1] = False
+        #             else:
+        #                 mask[:i+1, :j] = False
+        #             for h in range(j+1):
+        #                 if local_map[i, h] != 0 and (local_map[i+1:agent_pos[0]+1, j].all() == 20 or local_map[i+1:agent_pos[0]+1, j].all() == 60):
+        #                     mask[i, h] = True
+        #             break
+
+        # for j in range(grid.height):
+        #     for i in range(agent_pos[0]+1, grid.width):
+        #         if local_map[i, j] != 20 and local_map[i, j] != 60:
+        #             if j == grid.height-1:
+        #                 mask[i:, :j+1] = False
+        #             else:
+        #                 mask[i:, :j] = False
+        #             for h in range(j+1):
+        #                 if local_map[i, h] != 0 and (local_map[agent_pos[0]:i, j].all() == 20 or local_map[agent_pos[0]:i, j].all() == 60):
+        #                     mask[i, h] = True
+        #             break
+
+        # for j in range(agent_pos[1]-1, -1, -1):
+        #     if local_map[agent_pos[0], j] != 20 and local_map[agent_pos[0], j] != 60:
+        #         mask[agent_pos[0], :j] = False
+        #         break
+
+        # return mask
     ###################### Method on Farama Minigrid ######################
         # mask = np.zeros(shape=(grid.width, grid.height), dtype=bool)
 
@@ -1405,24 +1405,33 @@ class MiniGridEnv(gym.Env):
         # else:
         agent_view_size = self.agent_view_size
 
+        ### This is front camera view
+        # # Facing right
+        # if agent_dir == 0:
+        #     topX = agent_pos[0]
+        #     topY = agent_pos[1] - agent_view_size // 2
+        # # Facing down
+        # elif agent_dir == 1:
+        #     topX = agent_pos[0] - agent_view_size // 2
+        #     topY = agent_pos[1]
+        # # Facing left
+        # elif agent_dir == 2:
+        #     topX = agent_pos[0] - agent_view_size + 1
+        #     topY = agent_pos[1] - agent_view_size // 2
+        # # Facing up
+        # elif agent_dir == 3:
+        #     topX = agent_pos[0] - agent_view_size // 2
+        #     topY = agent_pos[1] - agent_view_size + 1
+        # else:
+        #     assert False, "invalid agent direction"
+
+        # botX = topX + agent_view_size
+        # botY = topY + agent_view_size
+
+        ### This is 360 degrees camera view
         # Facing right
-        if agent_dir == 0:
-            topX = agent_pos[0]
-            topY = agent_pos[1] - agent_view_size // 2
-        # Facing down
-        elif agent_dir == 1:
-            topX = agent_pos[0] - agent_view_size // 2
-            topY = agent_pos[1]
-        # Facing left
-        elif agent_dir == 2:
-            topX = agent_pos[0] - agent_view_size + 1
-            topY = agent_pos[1] - agent_view_size // 2
-        # Facing up
-        elif agent_dir == 3:
-            topX = agent_pos[0] - agent_view_size // 2
-            topY = agent_pos[1] - agent_view_size + 1
-        else:
-            assert False, "invalid agent direction"
+        topX = agent_pos[0] - agent_view_size // 2
+        topY = agent_pos[1] - agent_view_size // 2
 
         botX = topX + agent_view_size
         botY = topY + agent_view_size
@@ -1659,14 +1668,15 @@ class MiniGridEnv(gym.Env):
         topX, topY, botX, botY = self.get_view_exts(agent_id)
 
         grid = self.grid.slice(topX, topY, agent_view_size, agent_view_size)
-
-        for i in range(self.agent_dir[agent_id] + 1):
-            grid = grid.rotate_left()
+        
+        ### Rotate the grid for front camera view
+        # for i in range(self.agent_dir[agent_id] + 1):
+        #     grid = grid.rotate_left()
 
         # Process occluders and visibility
         # Note that this incurs some performance cost
         if not self.see_through_walls:
-            vis_mask = grid.process_vis(agent_pos=(agent_view_size // 2, agent_view_size - 1))
+            vis_mask = grid.process_vis(agent_pos=(agent_view_size // 2, agent_view_size // 2))
         else:
             vis_mask = np.ones(shape=(grid.width, grid.height), dtype=bool)
         # ic(vis_mask)
@@ -1756,13 +1766,35 @@ class MiniGridEnv(gym.Env):
             # Compute which cells are visible to the agent
             _, vis_mask = self.gen_obs_grid(agent_id)
 
-            # Compute the world coordinates of the bottom-left corner
-            # of the agent's view area
-            f_vec = self.dir_vec(agent_id)
-            r_vec = self.right_vec(agent_id)
-            top_left = self.agent_pos[agent_id] + f_vec * \
-                (agent_view_size -1) - r_vec * (agent_view_size // 2)
+            ### front camera view
+            # # Compute the world coordinates of the bottom-left corner
+            # # of the agent's view area 
+            # f_vec = self.dir_vec(agent_id)
+            # r_vec = self.right_vec(agent_id)
+            # top_left = self.agent_pos[agent_id] + f_vec * \
+            #     (agent_view_size -1) - r_vec * (agent_view_size // 2)
 
+            # # For each cell in the visibility mask
+            # for vis_j in range(0, agent_view_size):
+            #     for vis_i in range(0, agent_view_size):
+            #         # If this cell is not visible, don't highlight it
+            #         if not vis_mask[vis_i, vis_j]:
+            #             continue
+
+            #         # Compute the world coordinates of this cell
+            #         abs_i, abs_j = top_left - (f_vec * vis_j) + (r_vec * vis_i)
+
+            #         if abs_i < 0 or abs_i >= self.width:
+            #             continue
+            #         if abs_j < 0 or abs_j >= self.height:
+            #             continue
+
+            #         # Mark this cell to be highlighted
+            #         highlight_mask[abs_i, abs_j] = True
+            
+            ### 360 degrees view
+            # Compute the world coordinates of the top-left corner of the agent's view area 
+            top_left = [self.agent_pos[agent_id][0] - agent_view_size // 2, self.agent_pos[agent_id][1] - agent_view_size // 2]
             # For each cell in the visibility mask
             for vis_j in range(0, agent_view_size):
                 for vis_i in range(0, agent_view_size):
@@ -1771,7 +1803,8 @@ class MiniGridEnv(gym.Env):
                         continue
 
                     # Compute the world coordinates of this cell
-                    abs_i, abs_j = top_left - (f_vec * vis_j) + (r_vec * vis_i)
+                    abs_i = top_left[0] + vis_i
+                    abs_j = top_left[1] + vis_j
 
                     if abs_i < 0 or abs_i >= self.width:
                         continue

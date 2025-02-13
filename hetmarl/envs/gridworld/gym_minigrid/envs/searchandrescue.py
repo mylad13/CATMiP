@@ -156,7 +156,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
                         pos = (xR, self._rand_int(yT + 1, yB - 1))
 
                         for s in range(self.door_size):
-                            self.grid.set(*pos, None)
+                            self.grid.set(*pos, Door(color='grey',is_open=True))
                             self.doorways.add(tuple(pos))
                             self.doorways_adjacent_cells = self.doorways_adjacent_cells.union(self.adjacent_cells(*pos))
                             if self.block_doors and self._rand_float(0, 1) < self.block_chance: #randomly block some doorways
@@ -177,7 +177,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
                         else:
                             self.grid.horz_wall(xL, yB, room_w)
                         pos = (self._rand_int(xL + 1, xR - 1), yB)
-                        self.grid.set(*pos, None)
+                        self.grid.set(*pos, Door(color='grey',is_open=True))
                         self.doorways.add(tuple(pos))
                         self.doorways_adjacent_cells = self.doorways_adjacent_cells.union(self.adjacent_cells(*pos))
                         if self.block_doors and self._rand_float(0, 1) < self.block_chance: #randomly block some doorways
@@ -185,16 +185,16 @@ class SearchAndRescueEnv(MultiRoomEnv):
                             # self.grid.set(pos[0],pos[1]+self._rand_int(-1,1), Rubble())
                             rubble_pos = self.place_obj(Rubble(), top = (pos[0]-1, pos[1]-1), size = (2,2), reject_fn=accept_near_doors)
                             self.original_rubble_set.add(tuple(rubble_pos))
+        # print("original rubble set is: ", self.original_rubble_set)
         self.doorways_adjacent_cells = self.doorways_adjacent_cells.union(self.doorways)
-        # Randomize the player start position and orientation
-        # All the agents start near the top left corner of the map
-        if self._agent_default_pos is not None:
+        
+        if self._agent_default_pos is not None and len(self._agent_default_pos) > 0:
             self.agent_pos = self._agent_default_pos
-            for i in range(self.num_agents):
-                self.grid.set(*self._agent_default_pos[i], None)
+            # for i in range(self.num_agents):
+            #     self.grid.set(*self._agent_default_pos[i], None)
             self.agent_dir = [self._rand_int(0, 4) for i in range(
                 self.num_agents)]  # assuming random start direction
-        else:
+        else: # Randomize the player start position and orientation
             # self.place_agent(use_same_location=self.use_same_location)
             #only putting the agents near corners
             starting_corner_x = self._rand_int(0, 2)
@@ -264,7 +264,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
         #             self.grid.set(*path[i], Trace())
 
 
-        self.mission = 'Reach the target'
+        self.mission = 'Reach the goal'
     
     def astar_path(self, start, goal):
         obs_list = []
@@ -324,6 +324,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
             
 
     def reset(self):
+        #TODO: make the grids smaller because 360 vision doesn't require 2*agent_view_size padding
         self.explorable_size = 0
         # Agents
         self.agent_groups = np.eye(self.num_agents)
@@ -356,6 +357,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
         self.rubble_each_map = []
         self.global_rubble_each_map = []
         self.each_agent_trajectory_map = []
+        agent_local_views = []
         
         self.target_found = np.zeros((self.num_agents))
         self.is_target_found = 0
@@ -417,15 +419,27 @@ class SearchAndRescueEnv(MultiRoomEnv):
 
             
 
-            local_map = np.rot90(obs[i]['image'][:, :, 0].T, 3)
             pos = [self.agent_pos[i][1] + self.agent_view_size,
                    self.agent_pos[i][0] + self.agent_view_size]
             current_agent_pos.append(pos)
             direction = self.agent_dir[i]
-            # adjust angle
-            local_map = np.rot90(local_map, 4-direction)
             target_pos = None
-            
+
+            ### Front camera view
+            # local_map = np.rot90(obs[i]['image'][:, :, 0].T, 3)
+            # local_map = np.rot90(local_map, 4-direction) # adjust angle
+
+            ### 360 degrees view
+            local_map = obs[i]['image'][:, :, 0].T
+            for j in range(self.num_agents): #adding seen agents to the local view
+                if j != i:
+                    relative_pos = [self.agent_pos[j][0] - self.agent_pos[i][0], self.agent_pos[j][1] - self.agent_pos[i][1]]
+                    if abs(relative_pos[0]) <= self.agent_view_size//2 and abs(relative_pos[1]) <= self.agent_view_size//2:
+                        agent_cell = [relative_pos[1] + self.agent_view_size//2, relative_pos[0] + self.agent_view_size//2]
+                        if local_map[agent_cell[0], agent_cell[1]] != 0:
+                            local_map[agent_cell[0], agent_cell[1]] = 220
+            agent_local_views.append(local_map)
+
             # if self.agent_types_list[i] == 0: # actuator agents have a smaller view size
             #     agent_view_size = self.agent_view_size
             # else:
@@ -434,74 +448,109 @@ class SearchAndRescueEnv(MultiRoomEnv):
             # if not self.agent_alive[i]: # this should not be trigerred, every agent is alive at the first step
             #     continue
 
+            ### Front camera view
+            # for x in range(agent_view_size):
+            #         for y in range(agent_view_size):
+            #             if local_map[x][y] == 0:
+            #                 continue
+            #             elif direction == 0: # Facing right
+            #                 self.explored_each_map[i][x+pos[0] -
+            #                                         agent_view_size//2][y+pos[1]] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0] -
+            #                                                 agent_view_size//2 , y+pos[1]]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map[i][x+pos[0] - agent_view_size//2][y+pos[1]] = 1
+            #             elif direction == 1: # Facing down
+            #                 self.explored_each_map[i][x+pos[0]][y+pos[1] -
+            #                                                     agent_view_size//2] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0], y+pos[1] -
+            #                                                 agent_view_size//2]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map[i][x+pos[0]][y+pos[1] - agent_view_size//2] = 1
+            #             elif direction == 2: # Facing left
+            #                 self.explored_each_map[i][x+pos[0]-agent_view_size //
+            #                                         2][y+pos[1]-agent_view_size+1] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0]-agent_view_size//2, y+pos[1] -
+            #                                                 agent_view_size+1]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map[i][x+pos[0]-agent_view_size // 2][y+pos[1]-agent_view_size+1] = 1
+            #             elif direction == 3: # Facing up 
+            #                 self.explored_each_map[i][x+pos[0]-agent_view_size +
+            #                                         1][y+pos[1]-agent_view_size//2] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0]-agent_view_size + 1, y+pos[1] -
+            #                                                    agent_view_size//2]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map[i][x+pos[0]-agent_view_size + 1][y+pos[1]-agent_view_size//2] = 1
+
+            ### 360 degrees view
             for x in range(agent_view_size):
-                    for y in range(agent_view_size):
-                        if local_map[x][y] == 0:
-                            continue
-                        elif direction == 0: # Facing right
-                            self.explored_each_map[i][x+pos[0] -
-                                                    agent_view_size//2][y+pos[1]] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0] -
-                                                            agent_view_size//2 , y+pos[1]]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
-                                else:
-                                    self.obstacle_each_map[i][x+pos[0] - agent_view_size//2][y+pos[1]] = 1
-                        elif direction == 1: # Facing down
-                            self.explored_each_map[i][x+pos[0]][y+pos[1] -
-                                                                agent_view_size//2] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0], y+pos[1] -
-                                                            agent_view_size//2]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
-                                else:
-                                    self.obstacle_each_map[i][x+pos[0]][y+pos[1] - agent_view_size//2] = 1
-                        elif direction == 2: # Facing left
-                            self.explored_each_map[i][x+pos[0]-agent_view_size //
-                                                    2][y+pos[1]-agent_view_size+1] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0]-agent_view_size//2, y+pos[1] -
-                                                            agent_view_size+1]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
-                                else:
-                                    self.obstacle_each_map[i][x+pos[0]-agent_view_size // 2][y+pos[1]-agent_view_size+1] = 1
-                        elif direction == 3: # Facing up 
-                            self.explored_each_map[i][x+pos[0]-agent_view_size +
-                                                    1][y+pos[1]-agent_view_size//2] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0]-agent_view_size + 1, y+pos[1] -
-                                                               agent_view_size//2]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
-                                else:
-                                    self.obstacle_each_map[i][x+pos[0]-agent_view_size + 1][y+pos[1]-agent_view_size//2] = 1
+                for y in range(agent_view_size):
+                    if local_map[x][y] == 0:
+                        continue
+                    else:
+                        self.explored_each_map[i][x+pos[0] - agent_view_size//2][y+pos[1] - agent_view_size//2] = 1
+                        if local_map[x][y] != 20:
+                            if local_map[x][y] == 180:
+                                target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]
+                                # self.target_pos = target_pos
+                                self.current_target_pos = [x+pos[0] -
+                                                        agent_view_size//2 , y+pos[1] - agent_view_size//2]
+                                agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]))
+                            elif local_map[x][y] == 60:
+                                self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]))
+                            elif local_map[x][y] == 240:
+                                agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]))
+                            elif local_map[x][y] == 80: #door
+                                pass
+                            elif local_map[x][y] == 220: #another agent
+                                pass
+                            else:
+                                self.obstacle_each_map[i][x+pos[0] - agent_view_size//2][y+pos[1] - agent_view_size//2] = 1
+                        
             
             # Agent i has found the target
             if target_pos != None:
@@ -675,6 +724,8 @@ class SearchAndRescueEnv(MultiRoomEnv):
         # self.info['agent_inventory'] = self.agent_inventory
         self.info['number_of_rubbles_removed'] = number_of_rubbles_removed
         self.info['agent_number_of_known_rubbles'] = agent_number_of_known_rubbles
+        self.info['agent_local_views'] = agent_local_views
+        self.info['agent_target_sets'] = self.agent_target_sets
 
         # self.info['agent_rubble_sets'] = self.agent_rubble_sets
         # self.info['agent_target_sets'] = self.agent_target_sets
@@ -709,6 +760,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
         self.agent_groups = np.eye(self.num_agents)
         agent_rubble_sets = [] # temporary set
         agent_target_sets = [] # temporary set
+        agent_local_views = []
 
             
         for i in range(self.num_agents):
@@ -721,15 +773,30 @@ class SearchAndRescueEnv(MultiRoomEnv):
                 np.zeros((self.width + 2*self.agent_view_size, self.height + 2*self.agent_view_size)))
             
             
-            local_map = np.rot90(obs[i]['image'][:, :, 0].T, 3)
             
             pos = [self.agent_pos[i][1] + self.agent_view_size,
                    self.agent_pos[i][0] + self.agent_view_size]
             current_agent_pos.append(pos)
             direction = self.agent_dir[i]
-            # adjust angle to match global frame
-            local_map = np.rot90(local_map, 4-direction)
             target_pos = None
+
+            ### Front camera view
+            # local_map = np.rot90(obs[i]['image'][:, :, 0].T, 3)
+            # local_map = np.rot90(local_map, 4-direction) # adjust angle
+
+            ### 360 degrees view
+            local_map = obs[i]['image'][:, :, 0].T
+            for j in range(self.num_agents): #adding seen agents to the local view
+                if j != i:
+                    relative_pos = [self.agent_pos[j][0] - self.agent_pos[i][0], self.agent_pos[j][1] - self.agent_pos[i][1]]
+                    if abs(relative_pos[0]) <= self.agent_view_size//2 and abs(relative_pos[1]) <= self.agent_view_size//2:
+                        agent_cell = [relative_pos[1] + self.agent_view_size//2, relative_pos[0] + self.agent_view_size//2]
+                        if local_map[agent_cell[0], agent_cell[1]] != 0:
+                            local_map[agent_cell[0], agent_cell[1]] = 220
+            agent_local_views.append(local_map)
+
+
+
             # if self.agent_types_list[i] == 0: # actuator agents have a smaller view size
             #     agent_view_size = self.agent_view_size
             #     # agent_view_size = self.agent_view_size // 2
@@ -739,86 +806,121 @@ class SearchAndRescueEnv(MultiRoomEnv):
             if not self.agent_alive[i]:
                 continue
 
+            ### Front camera view
+            # for x in range(agent_view_size):
+            #         for y in range(agent_view_size):
+            #             if local_map[x][y] == 0:
+            #                 continue
+            #             elif direction == 0: # Facing right
+            #                 self.explored_each_map_t[i][x+pos[0] -
+            #                                         agent_view_size//2][y+pos[1]] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0] -
+            #                                                 agent_view_size//2 , y+pos[1]]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map_t[i][x+pos[0] - agent_view_size//2][y+pos[1]] = 1
+            #                 else:
+            #                     if tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]) in self.agent_rubble_sets[i]:
+            #                         self.agent_rubble_sets[i].discard(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
+            #             elif direction == 1: # Facing down
+            #                 self.explored_each_map_t[i][x+pos[0]][y+pos[1] -
+            #                                                     agent_view_size//2] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0], y+pos[1] -
+            #                                                 agent_view_size//2]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map_t[i][x+pos[0]][y+pos[1] - agent_view_size//2] = 1
+            #                 else:
+            #                     if tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]) in self.agent_rubble_sets[i]:
+            #                         self.agent_rubble_sets[i].discard(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
+            #             elif direction == 2: # Facing left
+            #                 self.explored_each_map_t[i][x+pos[0]-agent_view_size //
+            #                                         2][y+pos[1]-agent_view_size+1] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0]-agent_view_size//2, y+pos[1] -
+            #                                                 agent_view_size+1]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map_t[i][x+pos[0]-agent_view_size // 2][y+pos[1]-agent_view_size+1] = 1
+            #                 else:
+            #                     if tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]) in self.agent_rubble_sets[i]:
+            #                         self.agent_rubble_sets[i].discard(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
+            #             elif direction == 3: # Facing up 
+            #                 self.explored_each_map_t[i][x+pos[0]-agent_view_size +
+            #                                         1][y+pos[1]-agent_view_size//2] = 1
+            #                 if local_map[x][y] != 20:
+            #                     if local_map[x][y] == 180:
+            #                         target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]
+            #                         self.target_pos = target_pos
+            #                         self.current_target_pos = [x+pos[0]-agent_view_size + 1, y+pos[1] -
+            #                                                 agent_view_size//2]
+            #                         agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+            #                     elif local_map[x][y] == 60:
+            #                         self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+            #                     elif local_map[x][y] == 240:
+            #                         agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+            #                     elif local_map[x][y] == 80:
+            #                         pass
+            #                     else:
+            #                         self.obstacle_each_map_t[i][x+pos[0]-agent_view_size + 1][y+pos[1]-agent_view_size//2] = 1
+            #                 else:
+            #                     if tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]) in self.agent_rubble_sets[i]:
+            #                         self.agent_rubble_sets[i].discard(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+
+            ### 360 degrees view
             for x in range(agent_view_size):
-                    for y in range(agent_view_size):
-                        if local_map[x][y] == 0:
-                            continue
-                        elif direction == 0: # Facing right
-                            self.explored_each_map_t[i][x+pos[0] -
-                                                    agent_view_size//2][y+pos[1]] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0] -
-                                                            agent_view_size//2 , y+pos[1]]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
-                                else:
-                                    self.obstacle_each_map_t[i][x+pos[0] - agent_view_size//2][y+pos[1]] = 1
+                for y in range(agent_view_size):
+                    if local_map[x][y] == 0:
+                        continue
+                    else:
+                        self.explored_each_map[i][x+pos[0] - agent_view_size//2][y+pos[1] - agent_view_size//2] = 1
+                        if local_map[x][y] != 20:
+                            if local_map[x][y] == 180:
+                                target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]
+                                self.target_pos = target_pos
+                                self.current_target_pos = [x+pos[0] - agent_view_size//2 , y+pos[1] - agent_view_size//2]
+                                agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]))
+                            elif local_map[x][y] == 60:
+                                self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]))
+                            elif local_map[x][y] == 240:
+                                agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]))
+                            elif local_map[x][y] == 80: #door
+                                pass
+                            elif local_map[x][y] == 220: #another agent
+                                pass
                             else:
-                                if tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]) in self.agent_rubble_sets[i]:
-                                    self.agent_rubble_sets[i].discard(tuple([y+pos[1]-agent_view_size, x+pos[0] - 3*agent_view_size//2]))
-                        elif direction == 1: # Facing down
-                            self.explored_each_map_t[i][x+pos[0]][y+pos[1] -
-                                                                agent_view_size//2] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0], y+pos[1] -
-                                                            agent_view_size//2]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
-                                else:
-                                    self.obstacle_each_map_t[i][x+pos[0]][y+pos[1] - agent_view_size//2] = 1
-                            else:
-                                if tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]) in self.agent_rubble_sets[i]:
-                                    self.agent_rubble_sets[i].discard(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - agent_view_size]))
-                        elif direction == 2: # Facing left
-                            self.explored_each_map_t[i][x+pos[0]-agent_view_size //
-                                                    2][y+pos[1]-agent_view_size+1] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0]-agent_view_size//2, y+pos[1] -
-                                                            agent_view_size+1]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
-                                else:
-                                    self.obstacle_each_map_t[i][x+pos[0]-agent_view_size // 2][y+pos[1]-agent_view_size+1] = 1
-                            else:
-                                if tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]) in self.agent_rubble_sets[i]:
-                                    self.agent_rubble_sets[i].discard(tuple([y+pos[1]-2*agent_view_size+1, x+pos[0] - 3*agent_view_size//2]))
-                        elif direction == 3: # Facing up 
-                            self.explored_each_map_t[i][x+pos[0]-agent_view_size +
-                                                    1][y+pos[1]-agent_view_size//2] = 1
-                            if local_map[x][y] != 20:
-                                if local_map[x][y] == 180:
-                                    target_pos = [y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]
-                                    self.target_pos = target_pos
-                                    self.current_target_pos = [x+pos[0]-agent_view_size + 1, y+pos[1] -
-                                                            agent_view_size//2]
-                                    agent_target_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
-                                elif local_map[x][y] == 60:
-                                    self.agent_trace_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
-                                elif local_map[x][y] == 240:
-                                    agent_rubble_sets[i].add(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
-                                else:
-                                    self.obstacle_each_map_t[i][x+pos[0]-agent_view_size + 1][y+pos[1]-agent_view_size//2] = 1
-                            else:
-                                if tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]) in self.agent_rubble_sets[i]:
-                                    self.agent_rubble_sets[i].discard(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 2*agent_view_size+1]))
+                                self.obstacle_each_map[i][x+pos[0] - agent_view_size//2][y+pos[1] - agent_view_size//2] = 1
+                        elif tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]) in self.agent_rubble_sets[i]:
+                                self.agent_rubble_sets[i].discard(tuple([y+pos[1]-3*agent_view_size//2, x+pos[0] - 3*agent_view_size//2]))
             
             # Agent i has found the target
             if target_pos != None:
@@ -956,6 +1058,8 @@ class SearchAndRescueEnv(MultiRoomEnv):
                 counter += 1
         self.set_target_all_map()
         self.set_rubble_all_map()            
+        # print("agent rubble sets after comm: ", self.agent_rubble_sets)
+        # print("rubble all set: ", self.all_rubble_set)
 
         reward_explored_all_map = explored_all_map.copy()
         reward_explored_all_map[reward_explored_all_map != 0] = 1
@@ -992,7 +1096,8 @@ class SearchAndRescueEnv(MultiRoomEnv):
             occupied_all_map[rubble_pos[1]+self.agent_view_size, rubble_pos[0]+self.agent_view_size] = 1
         if self.is_target_found:
             occupied_all_map[self.target_pos[1]+self.agent_view_size, self.target_pos[0]+self.agent_view_size] = 1
-
+        # print("all rubble set: ", self.all_rubble_set)
+        # print("agent rubble sets: ", self.agent_rubble_sets)
         number_agent_rubbles_attended = []
         agent_number_of_known_rubbles = np.zeros(self.num_agents)
         for i in range(self.num_agents):
@@ -1000,6 +1105,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
             agent_number_of_known_rubbles[i] = len(self.agent_rubble_sets[i])
         
         number_of_rubbles_removed = sum(number_agent_rubbles_attended) 
+        # print("number_of_rubbles_removed: ", number_of_rubbles_removed)
 
         self.info = {}
         self.info['explored_all_map'] = np.array(explored_all_map)
@@ -1028,6 +1134,8 @@ class SearchAndRescueEnv(MultiRoomEnv):
         # self.info['agent_inventory'] = self.agent_inventory
         self.info['number_of_rubbles_removed'] = number_of_rubbles_removed
         self.info['agent_number_of_known_rubbles'] = agent_number_of_known_rubbles
+        self.info['agent_local_views'] = agent_local_views
+        self.info['agent_target_sets'] = self.agent_target_sets
         
         # self.info['agent_rubble_sets'] = self.agent_rubble_sets
         # self.info['agent_target_sets'] = self.agent_target_sets
@@ -1157,6 +1265,10 @@ class SearchAndRescueEnv(MultiRoomEnv):
             map[map == 3] = 0  # set unknown area to explorable
             # print(map)
             if self.num_step >= 1:
+                # print("ft goals for agent ", agent_id, " is: ", self.ft_goals[agent_id])
+                # print("map value for agent ", agent_id, " is: ", map[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]])
+                # print("current agent pos: ", current_agent_pos[agent_id])
+                # print("unexplored value for agent ", agent_id, " is: ", unexplored[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]])
                 if (map[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]] != 2) and\
                 (unexplored[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]] == 0):
                     replan[agent_id] = True
