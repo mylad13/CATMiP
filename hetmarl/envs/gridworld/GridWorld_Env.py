@@ -28,6 +28,8 @@ class GridWorldEnv(object):
             use_time_penalty=args.use_time_penalty,
             use_energy_penalty=args.use_energy_penalty,
             use_intrinsic_reward=args.use_intrinsic_reward,
+            use_slam_noise = args.use_slam_noise,
+            slam_noise_prob = args.slam_noise_prob,
             entry_point='hetmarl.envs.gridworld.gym_minigrid.envs:SearchAndRescueEnv',
             algorithm_name = args.algorithm_name,
             trajectory_forget_rate=args.trajectory_forget_rate,
@@ -62,11 +64,11 @@ class GridWorldEnv(object):
         if args.algorithm_name == 'mat' or args.algorithm_name == 'amat':
             global_observation_space['agent_class_identifier'] = gym.spaces.Box(low=0, high=1, shape=(args.n_agent_types,), dtype='uint8')
             global_observation_space['global_agent_map'] = gym.spaces.Box(low=0, high=1, shape=(7 ,args.grid_size, args.grid_size), dtype='float')
-            global_observation_space['local_agent_map'] = gym.spaces.Box(low=0, high=1, shape=(6, action_size_length, action_size_length), dtype='float')
+            global_observation_space['local_agent_map'] = gym.spaces.Box(low=0, high=1, shape=(6, 7, 7), dtype='float')
         elif args.algorithm_name == 'mancp':
             global_observation_space['agent_class_identifier'] = gym.spaces.Box(low=0, high=1, shape=(args.n_agent_types,), dtype='uint8')
             global_observation_space['global_agent_map'] = gym.spaces.Box(low=0, high=1, shape=(7 ,args.grid_size, args.grid_size), dtype='float')
-            global_observation_space['local_agent_map'] = gym.spaces.Box(low=0, high=1, shape=(6, action_size_length, action_size_length), dtype='float')
+            global_observation_space['local_agent_map'] = gym.spaces.Box(low=0, high=1, shape=(6, 7, 7), dtype='float')
             global_observation_space['timespan'] = gym.spaces.Box(low=0, high=30, shape=(1,), dtype='uint8')
         elif args.algorithm_name[:2] == "ft":
             pass

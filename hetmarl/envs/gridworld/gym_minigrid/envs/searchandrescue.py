@@ -57,6 +57,8 @@ class SearchAndRescueEnv(MultiRoomEnv):
         use_energy_penalty=False,
         use_intrinsic_reward=False,
         use_agent_obstacle = False,
+        use_slam_noise = False,
+        slam_noise_prob = 0.05,
         algorithm_name = 'amat',
         trajectory_forget_rate = 0.8,
         com_sigma = 5,
@@ -64,6 +66,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
         block_chance = 0.2,
         detect_traces = False,
         action_size = 5
+        
     ):
         self.grid_size = grid_size
         self._agent_default_pos = agent_pos
@@ -74,6 +77,8 @@ class SearchAndRescueEnv(MultiRoomEnv):
         self.use_time_penalty = use_time_penalty
         self.use_energy_penalty = use_energy_penalty
         self.use_intrinsic_reward = use_intrinsic_reward
+        self.use_slam_noise = use_slam_noise
+        self.slam_noise_prob = slam_noise_prob
 
         self.use_full_comm = use_full_comm
         self.use_partial_comm = use_partial_comm
@@ -265,6 +270,19 @@ class SearchAndRescueEnv(MultiRoomEnv):
 
 
         self.mission = 'Reach the target'
+    
+    def _apply_slam_noise(self, occupied_map, explored_map):
+        """
+        Flip obstacle/free in explored cells with probability self.slam_noise_prob.
+        occupied_map: np.array, 0=free, 1=obstacle
+        explored_map: np.array, 0=unexplored, 1=explored
+        """
+        noisy_map = occupied_map.copy()
+        mask = (explored_map > 0)
+        flip = np.random.rand(*occupied_map.shape) < self.slam_noise_prob
+        flip_mask = mask & flip
+        noisy_map[flip_mask] = 1 - noisy_map[flip_mask]
+        return noisy_map
     
     def astar_path(self, start, goal):
         obs_list = []
@@ -612,7 +630,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
 
                 counter += 1
         self.set_target_all_map()
-        self.set_rubble_all_map()
+        # self.set_rubble_all_map()
         
         self.explored_map = np.array(explored_all_map).astype(int)[
             self.agent_view_size: self.width+self.agent_view_size, self.agent_view_size: self.width+self.agent_view_size]
@@ -641,6 +659,24 @@ class SearchAndRescueEnv(MultiRoomEnv):
             self.apf_penalty[i, x, y] = 5.0  # constant
 
         self.info = {}
+        if self.use_slam_noise:
+            noisy_occupied_all_map = self._apply_slam_noise(
+                np.array(occupied_all_map), np.array(explored_all_map)
+            )
+            noisy_occupied_each_map = np.array([
+                self._apply_slam_noise(occupied_each_map[i], self.explored_each_map[i])
+                for i in range(self.num_agents)
+            ])
+            # Ensure agent positions are not marked as obstacles for now.
+            for i in range(self.num_agents):
+                pos = self.agent_pos[i]
+                # Adjust for padding if necessary
+                x = pos[1] + self.agent_view_size
+                y = pos[0] + self.agent_view_size
+                noisy_occupied_all_map[x, y] = 0
+                noisy_occupied_each_map[i][x, y] = 0
+            self.info['noisy_occupied_all_map'] = noisy_occupied_all_map
+            self.info['noisy_occupied_each_map'] = noisy_occupied_each_map
         self.info['explored_all_map'] = np.array(explored_all_map)
         self.info['agent_pos'] = np.array(self.agent_pos)
         self.info['current_agent_pos'] = np.array(current_agent_pos)
@@ -648,10 +684,10 @@ class SearchAndRescueEnv(MultiRoomEnv):
         self.info['explored_each_map'] = np.array(self.explored_each_map)
         self.info['occupied_all_map'] = np.array(occupied_all_map)
         self.info['occupied_each_map'] = np.array(occupied_each_map)
-        self.info['rubble_each_map'] = np.array(self.rubble_each_map)
-        self.info['global_rubble_each_map'] = np.array(self.global_rubble_each_map)
-        self.info['rubble_all_map'] = np.array(self.rubble_all_map)
-        self.info['global_rubble_all_map'] = np.array(self.global_rubble_all_map)
+        # self.info['rubble_each_map'] = np.array(self.rubble_each_map)
+        # self.info['global_rubble_each_map'] = np.array(self.global_rubble_each_map)
+        # self.info['rubble_all_map'] = np.array(self.rubble_all_map)
+        # self.info['global_rubble_all_map'] = np.array(self.global_rubble_all_map)
         self.info['target_each_map'] = np.array(self.target_each_map)
         self.info['global_target_each_map'] = np.array(self.global_target_each_map)
         self.info['target_all_map'] = np.array(self.target_all_map)
@@ -955,7 +991,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
                     
                 counter += 1
         self.set_target_all_map()
-        self.set_rubble_all_map()            
+        # self.set_rubble_all_map()            
 
         reward_explored_all_map = explored_all_map.copy()
         reward_explored_all_map[reward_explored_all_map != 0] = 1
@@ -992,7 +1028,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
             occupied_all_map[rubble_pos[1]+self.agent_view_size, rubble_pos[0]+self.agent_view_size] = 1
         if self.is_target_found:
             occupied_all_map[self.target_pos[1]+self.agent_view_size, self.target_pos[0]+self.agent_view_size] = 1
-
+            
         number_agent_rubbles_attended = []
         agent_number_of_known_rubbles = np.zeros(self.num_agents)
         for i in range(self.num_agents):
@@ -1002,17 +1038,35 @@ class SearchAndRescueEnv(MultiRoomEnv):
         number_of_rubbles_removed = sum(number_agent_rubbles_attended) 
 
         self.info = {}
+        if self.use_slam_noise:
+            noisy_occupied_all_map = self._apply_slam_noise(
+                np.array(occupied_all_map), np.array(explored_all_map)
+            )
+            noisy_occupied_each_map = np.array([
+                self._apply_slam_noise(occupied_each_map[i], self.explored_each_map[i])
+                for i in range(self.num_agents)
+            ])
+            # Ensure agent positions are not marked as obstacles for now.
+            for i in range(self.num_agents):
+                pos = self.agent_pos[i]
+                # Adjust for padding if necessary
+                x = pos[1] + self.agent_view_size
+                y = pos[0] + self.agent_view_size
+                noisy_occupied_all_map[x, y] = 0
+                noisy_occupied_each_map[i][x, y] = 0
+            self.info['noisy_occupied_all_map'] = noisy_occupied_all_map
+            self.info['noisy_occupied_each_map'] = noisy_occupied_each_map
+        self.info['occupied_all_map'] = np.array(occupied_all_map)
+        self.info['occupied_each_map'] = np.array(occupied_each_map)
         self.info['explored_all_map'] = np.array(explored_all_map)
+        self.info['explored_each_map'] = np.array(self.explored_each_map)
         self.info['agent_pos'] = np.array(self.agent_pos)
         self.info['current_agent_pos'] = np.array(current_agent_pos)
         self.info['agent_direction'] = np.array(self.agent_dir)
-        self.info['explored_each_map'] = np.array(self.explored_each_map)
-        self.info['occupied_all_map'] = np.array(occupied_all_map)
-        self.info['occupied_each_map'] = np.array(occupied_each_map)
-        self.info['rubble_each_map'] = np.array(self.rubble_each_map)
-        self.info['global_rubble_each_map'] = self.global_rubble_each_map
-        self.info['rubble_all_map'] = np.array(self.rubble_all_map)
-        self.info['global_rubble_all_map'] = self.global_rubble_all_map
+        # self.info['rubble_each_map'] = np.array(self.rubble_each_map)
+        # self.info['global_rubble_each_map'] = self.global_rubble_each_map
+        # self.info['rubble_all_map'] = np.array(self.rubble_all_map)
+        # self.info['global_rubble_all_map'] = self.global_rubble_all_map
         self.info['target_each_map'] = np.array(self.target_each_map)
         self.info['global_target_each_map'] = self.global_target_each_map
         self.info['target_all_map'] = np.array(self.target_all_map)
@@ -1116,24 +1170,36 @@ class SearchAndRescueEnv(MultiRoomEnv):
         for agent_id in range(self.num_agents):
             if self.use_full_comm:
                 explored = (self.info['explored_all_map'] > 0).astype(np.int32)
-                obstacle = (self.info['occupied_all_map'] > 0).astype(np.int32)
-                obstacle_reduced = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)[
-                    self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                if self.use_slam_noise:
+                    obstacle = (self.info['noisy_occupied_all_map'] > 0).astype(np.int32)
+                    obstacle_reduced = (self.info['noisy_occupied_each_map'][agent_id] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                else:
+                    obstacle = (self.info['occupied_all_map'] > 0).astype(np.int32)
+                    obstacle_reduced = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
                 if self.use_agent_obstacle:
-                    for a in range(self.num_agents):
-                        if a != agent_id:
-                            obstacle[current_agent_pos[a][0], current_agent_pos[a][1]] = 1
+                    if mode != 'voronoi': # make an exception for voronoi goal
+                        for a in range(self.num_agents):
+                            if a != agent_id:
+                                obstacle[current_agent_pos[a][0], current_agent_pos[a][1]] = 1
             elif self.use_partial_comm:
                 explored = (self.info['explored_each_map'][agent_id] > 0).astype(np.int32)
-                obstacle = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)
-                obstacle_reduced = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)[
-                    self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                if self.use_slam_noise:
+                    obstacle = (self.info['noisy_occupied_each_map'][agent_id] > 0).astype(np.int32)
+                    obstacle_reduced = (self.info['noisy_occupied_each_map'][agent_id] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                else:
+                    obstacle = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)
+                    obstacle_reduced = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
                 if self.use_agent_obstacle:
-                    for group in connected_agent_groups:
-                        if agent_id in group:
-                            for a in group:
-                                if a != agent_id:
-                                    obstacle[current_agent_pos[a][0], current_agent_pos[a][1]] = 1
+                    if mode != 'voronoi': # make an exception for voronoi goal
+                        for group in connected_agent_groups:
+                            if agent_id in group:
+                                for a in group:
+                                    if a != agent_id:
+                                        obstacle[current_agent_pos[a][0], current_agent_pos[a][1]] = 1
             else:
                 raise NotImplementedError
 
@@ -1157,6 +1223,10 @@ class SearchAndRescueEnv(MultiRoomEnv):
             map[map == 3] = 0  # set unknown area to explorable
             # print(map)
             if self.num_step >= 1:
+                # print("ft goals for agent ", agent_id, " is: ", self.ft_goals[agent_id])
+                # print("map value for agent ", agent_id, " is: ", map[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]])
+                # print("current agent pos: ", current_agent_pos[agent_id])
+                # print("unexplored value for agent ", agent_id, " is: ", unexplored[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]])
                 if (map[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]] != 2) and\
                 (unexplored[self.ft_goals[agent_id][0], self.ft_goals[agent_id][1]] == 0):
                     replan[agent_id] = True
@@ -1386,16 +1456,24 @@ class SearchAndRescueEnv(MultiRoomEnv):
         actions = []
         paths = []
         for agent_id in range(self.num_agents):
-            if self.use_full_comm: 
+            if self.use_full_comm:
                 explored = (self.info['explored_all_map'] > 0).astype(np.int32)[
-                    self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
-                obstacle = (self.info['occupied_all_map'] > 0).astype(np.int32)[
-                    self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                if self.use_slam_noise:
+                    obstacle = (self.info['noisy_occupied_all_map'] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                else:
+                    obstacle = (self.info['occupied_all_map'] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
             elif self.use_partial_comm:
                 explored = (self.info['explored_each_map'][agent_id] > 0).astype(np.int32)[
-                    self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
-                obstacle = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)[
-                    self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                if self.use_slam_noise:
+                    obstacle = (self.info['noisy_occupied_each_map'][agent_id] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
+                else:
+                    obstacle = (self.info['occupied_each_map'][agent_id] > 0).astype(np.int32)[
+                        self.agent_view_size:self.agent_view_size+self.width, self.agent_view_size:self.agent_view_size+self.height]
             else:
                 raise NotImplementedError
             

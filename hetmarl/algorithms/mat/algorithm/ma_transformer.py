@@ -138,8 +138,8 @@ class Encoder(nn.Module):
         global_input_channel = obs_dim['global_agent_map'].shape[0]
         global_input_width = obs_dim['global_agent_map'].shape[1]
         global_input_height = obs_dim['global_agent_map'].shape[2]
-        fixed_width = 8
-        fixed_height = 8
+        fixed_width = 4
+        fixed_height = 4
 
         global_out_channel1 = 32
         global_out_channel2 = 16
@@ -438,7 +438,8 @@ class Decoder(nn.Module):
             if self.action_type == 'Discrete':
                 action = action.reshape(-1, 1 + self.action_dim)
                 action_encodings = self.action_encoder(action)
-
+                # print("shape of action is: ", action.shape)
+                # print("shape of obs['agent_class_identifier'] is: ", obs['agent_class_identifier'].shape)
                 agent_class_encoding = self.agent_class_encoder(obs['agent_class_identifier'])
                 action_embeddings = action_encodings + agent_class_encoding
                 action_embeddings = action_embeddings.reshape(-1, self.n_agent, self.n_embd) # (batch_size, n_agent, n_embd)
@@ -448,7 +449,8 @@ class Decoder(nn.Module):
                 logit = self.head(x)
             else:
                 action = action.reshape(-1, 1, 1 + self.action_dim[0] + self.action_dim[1]) # (batch_size * n_agent, 1, act_dim[0]+1,act_dim[1]+1)
-
+                # print("Shape of action before passing to action encoder is: ", action.shape)
+                # print("shape of obs is ", obs['agent_class_identifier'])
                 action = torch.squeeze(action)
                 action_encodings = self.action_encoder(action)
                 agent_class_encoding = self.agent_class_encoder(obs['agent_class_identifier']) #not sure if this is necessary

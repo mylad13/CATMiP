@@ -272,7 +272,7 @@ class GridWorldRunner(Runner):
         obs['agent_class_identifier'] = np.zeros((len(dict_obs), self.num_agents, self.n_agent_types), dtype=int)
         # obs['agent_inventory'] = np.zeros((len(dict_obs), self.num_agents, 2), dtype=int)
         obs['global_agent_map'] = np.zeros((len(dict_obs), self.num_agents, 7, self.map_size, self.map_size), dtype=np.float32)
-        obs['local_agent_map'] = np.zeros((len(dict_obs), self.num_agents, 6, 2*self.action_size + 1, 2*self.action_size + 1), dtype=np.float32)
+        obs['local_agent_map'] = np.zeros((len(dict_obs), self.num_agents, 6, 7, 7), dtype=np.float32)
         if self.algorithm_name == 'mancp':
             obs['timespan'] = np.zeros((len(dict_obs), self.num_agents, 1), dtype=np.float32)
             # active agents are [e,a,cnt]
@@ -360,11 +360,19 @@ class GridWorldRunner(Runner):
                 for agent_id in range(self.num_agents):
                     if self.agent_alive[e][agent_id] == 0:
                         continue
-
                     obs['global_agent_map'][e, agent_id, 0] = infos[e]['explored_all_map'][self.agent_view_size:self.full_w -
-                                                                    self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size] 
-                    obs['global_agent_map'][e, agent_id, 1] = infos[e]['occupied_all_map'][self.agent_view_size:self.full_w -
-                                                                    self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
+                                                                        self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size] 
+                    if self.use_slam_noise:
+                        obs['global_agent_map'][e, agent_id, 1] = infos[e]['noisy_occupied_all_map'][self.agent_view_size:self.full_w -
+                                                                        self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
+                        obs['local_agent_map'][e, agent_id, 1] = infos[e]['noisy_occupied_all_map'][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
+                    else:
+                        
+                        obs['global_agent_map'][e, agent_id, 1] = infos[e]['occupied_all_map'][self.agent_view_size:self.full_w -
+                                                                        self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
+                        obs['local_agent_map'][e, agent_id, 1] = infos[e]['occupied_all_map'][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
                     obs['global_agent_map'][e, agent_id, 2] = infos[e]['global_target_all_map'][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                     # obs['global_agent_map'][e, agent_id, 3] = infos[e]['global_rubble_all_map'][self.agent_view_size:self.full_w -
@@ -373,8 +381,6 @@ class GridWorldRunner(Runner):
                     #                                                 self.agent_view_size:self.full_h - self.agent_view_size]
                     obs['global_agent_map'][e, agent_id, 3] = global_agent_pos_map[e, agent_id][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
-                    # obs['global_agent_map'][e, agent_id, 5] = highlighted_action_area[e, agent_id][self.action_size:self.map_size + self.action_size,
-                    #                                                                                  self.action_size:self.map_size + self.action_size]
                     obs['global_agent_map'][e, agent_id, 4] = global_type0_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                     obs['global_agent_map'][e, agent_id, 5] = global_type1_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -
@@ -386,22 +392,20 @@ class GridWorldRunner(Runner):
                     # obs['global_agent_map'][e, agent_id, 6] = other_agents_pos_map[e,agent_id][self.agent_view_size:self.full_w -
                     #                                                 self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                                        
-                    obs['local_agent_map'][e,agent_id,0] = infos[e]['explored_all_map'][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,1] = infos[e]['occupied_all_map'][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,2] = infos[e]['target_all_map'][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
+                    obs['local_agent_map'][e, agent_id, 0] = infos[e]['explored_all_map'][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
+                    obs['local_agent_map'][e, agent_id, 2] = infos[e]['target_all_map'][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
                     # obs['local_agent_map'][e,agent_id,3] = infos[e]['rubble_all_map'][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                     #                                             +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,3] = type0_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,4] = type1_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
+                    obs['local_agent_map'][e, agent_id, 3] = type0_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
+                    obs['local_agent_map'][e, agent_id, 4] = type1_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
                     # obs['local_agent_map'][e,agent_id,6] = type2_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                     #                                             +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,5] = self.agent_goal_history[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
+                    obs['local_agent_map'][e, agent_id, 5] = self.agent_goal_history[e,agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
                     
                     # obs['local_agent_map'][e,agent_id,3] = infos[e]['each_agent_trajectory_map'][agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                     #                                             +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
@@ -409,6 +413,7 @@ class GridWorldRunner(Runner):
                 
                 obs['agent_class_identifier'][e] = self.agent_class_identifier[e]
                 # obs['agent_inventory'][e] = infos[e]['agent_inventory']
+                # print("agent inventory is: ", infos[e]['agent_inventory'])
             # obs['global_agent_map'] = np.zeros((len(dict_obs), self.num_agents, 8, self.map_size, self.map_size), dtype=np.float32)
             # obs['local_agent_map'] = np.zeros((len(dict_obs), self.num_agents, 4, 2*self.action_size + 1, 2*self.action_size + 1), dtype=np.float32)
         elif self.use_partial_comm:
@@ -462,11 +467,21 @@ class GridWorldRunner(Runner):
             for e in range(len(dict_obs)):
                 for agent_id in range(self.num_agents):
                     if self.agent_alive[e][agent_id] == 0:
-                        continue                    
+                        continue      
                     obs['global_agent_map'][e, agent_id, 0] = infos[e]['explored_each_map'][agent_id][self.agent_view_size:self.full_w -
-                                                                    self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size] 
-                    obs['global_agent_map'][e, agent_id, 1] = infos[e]['occupied_each_map'][agent_id][self.agent_view_size:self.full_w -
-                                                                        self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
+                                                                        self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]               
+                    if self.use_slam_noise:
+                        obs['global_agent_map'][e, agent_id, 1] = infos[e]['noisy_occupied_each_map'][agent_id][self.agent_view_size:self.full_w -
+                                                                            self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
+                        obs['local_agent_map'][e, agent_id, 1] = infos[e]['noisy_occupied_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
+                    else:
+                        
+                        obs['global_agent_map'][e, agent_id, 1] = infos[e]['occupied_each_map'][agent_id][self.agent_view_size:self.full_w -
+                                                                            self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
+                        obs['local_agent_map'][e, agent_id, 1] = infos[e]['occupied_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                    +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
+                    
                     obs['global_agent_map'][e, agent_id, 2] = infos[e]['global_target_each_map'][agent_id][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                     # obs['global_agent_map'][e, agent_id, 3] = infos[e]['global_rubble_each_map'][agent_id][self.agent_view_size:self.full_w -
@@ -475,8 +490,6 @@ class GridWorldRunner(Runner):
                     #                                                                         self.agent_view_size:self.full_h - self.agent_view_size]                    
                     obs['global_agent_map'][e, agent_id, 3] = global_agent_pos_map[e, agent_id][self.agent_view_size:self.full_w -
                                                                                    self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
-                    # obs['global_agent_map'][e, agent_id, 5] = highlighted_action_area[e, agent_id][self.action_size:self.map_size + self.action_size,
-                    #                                                                                  self.action_size:self.map_size + self.action_size]
                     obs['global_agent_map'][e, agent_id, 4] = global_type0_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -
                                                                                    self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                     obs['global_agent_map'][e, agent_id, 5] = global_type1_agent_pos_map[e,agent_id][self.agent_view_size:self.full_w -
@@ -490,22 +503,20 @@ class GridWorldRunner(Runner):
                     # obs['global_agent_map'][e, agent_id, 5] = infos[e]["each_agent_trajectory_map"][agent_id][self.agent_view_size:self.full_w - self.agent_view_size,
                     #                                                                                             self.agent_view_size:self.full_h - self.agent_view_size]
 
-                    obs['local_agent_map'][e,agent_id,0] = infos[e]['explored_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,1] = infos[e]['occupied_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,2] = infos[e]['target_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
+                    obs['local_agent_map'][e, agent_id, 0] = infos[e]['explored_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
+                    obs['local_agent_map'][e, agent_id, 2] = infos[e]['target_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
                     # obs['local_agent_map'][e,agent_id,3] = infos[e]['rubble_each_map'][agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                     #                                             +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,3] = type0_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,4] = type1_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
+                    obs['local_agent_map'][e, agent_id, 3] = type0_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
+                    obs['local_agent_map'][e, agent_id, 4] = type1_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
                     # obs['local_agent_map'][e,agent_id,6] = type2_agent_pos_map[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                     #                                             +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,5] = self.agent_goal_history[e,agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
-                                                                +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
+                    obs['local_agent_map'][e, agent_id, 5] = self.agent_goal_history[e,agent_id][current_agent_pos[e, agent_id][0]-self.agent_view_size//2:current_agent_pos[e, agent_id][0]
+                                                                +self.agent_view_size//2+1, current_agent_pos[e, agent_id][1]-self.agent_view_size//2:current_agent_pos[e, agent_id][1]+self.agent_view_size//2+1]
                     # obs['local_agent_map'][e,agent_id,3] = infos[e]['each_agent_trajectory_map'][agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                     #                                             +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
 
@@ -513,8 +524,8 @@ class GridWorldRunner(Runner):
                 # obs['agent_inventory'][e] = infos[e]['agent_inventory']
         else:
             pass
-        # plt.imshow(obs['global_agent_map'][0,2,4])
-        # plt.imshow(obs['local_agent_map'][0,0,0])
+        # plt.imshow(obs['global_agent_map'][0,0,1])
+        # plt.imshow(obs['local_agent_map'][0,0,1])
         # plt.show()
 
         return obs
@@ -590,6 +601,8 @@ class GridWorldRunner(Runner):
         self.use_orientation = self.all_args.use_orientation
         self.goal_history_decay = self.all_args.goal_history_decay
         self.path_prediction_decay = self.all_args.path_prediction_decay
+
+        self.use_slam_noise = self.all_args.use_slam_noise
 
         self.best_gobal_reward = -np.inf
 
@@ -937,13 +950,13 @@ class GridWorldRunner(Runner):
                             all_rnn_states_critic.append(rnn_states_critic)
 
                 n_stacked_threads = concat_obs['agent_class_identifier'].shape[0] # total groups with at least one active agent
+                # print("number of stacked threads are: ", n_stacked_threads)
                 if self.use_action_masking:
                     all_available_actions = np.array(all_available_actions)
                 else:
                     all_available_actions = None
                 all_rnn_states_actor = np.array(all_rnn_states_actor)
                 all_rnn_states_critic = np.array(all_rnn_states_critic)
-
                 for key in obs_shape:
                     concat_share_obs[key] = np.concatenate(concat_share_obs[key])
                     concat_obs[key] = np.concatenate(concat_obs[key])
@@ -1024,7 +1037,9 @@ class GridWorldRunner(Runner):
                     all_available_actions = None
                 all_rnn_states_actor = np.array(all_rnn_states_actor)
                 all_rnn_states_critic = np.array(all_rnn_states_critic)
-
+                # print("shape of available actions is: ", all_available_actions.shape)
+                # print("shape of all rnn states actor is: ", all_rnn_states_actor.shape)
+                # print("number of stacked threads are: ", n_stacked_threads)
                 for key in obs_shape:
                     concat_share_obs[key] = np.concatenate(concat_share_obs[key])
                     concat_obs[key] = np.concatenate(concat_obs[key])
@@ -1318,11 +1333,13 @@ class GridWorldRunner(Runner):
                     else:
                         all_available_actions = None
                     all_rnn_states = np.array(all_rnn_states)
-
                     for key in obs.keys():
                         concat_share_obs[key] = np.concatenate(concat_share_obs[key])
                         concat_obs[key] = np.concatenate(concat_obs[key])
+                    # inference_start_time = time.time()
                     short_term_goal, rnn_states = get_short_term_goal(self, concat_obs, concat_share_obs, all_rnn_states, n_stacked_threads, all_available_actions)
+                    # inference_end_time = time.time()
+                    # print("inference time is: ", inference_end_time - inference_start_time)
                     counter = 0 # used to move through the concatenated actions resulting from concatenated obs
                     for e in range(n_threads):
                         if len(active_threads[e]) <= 1:
@@ -1430,7 +1447,6 @@ class GridWorldRunner(Runner):
         masks[dones_env == True] = np.zeros(
             ((dones_env == True).sum(), self.num_agents, 1), dtype=np.float32)
 
-
         if active_agents is None:
             obs = self._convert(dict_obs, infos, step)
         else:
@@ -1451,11 +1467,14 @@ class GridWorldRunner(Runner):
             def generate_random_period(min_t,max_t):
                 return 0
             self.asynch_control = AsynchControl(num_envs=self.n_eval_rollout_threads, num_agents=self.num_agents,
-                                                limit=self.episode_length, random_fn=generate_random_period, min_wait=2, max_wait=5, rest_time = 10)
+                                                limit=self.episode_length, random_fn=generate_random_period, min_wait=2, max_wait=5, rest_time = 5)
         eval_envs = self.eval_envs
         self.eval_env_infos = defaultdict(list)
         use_ft = self.all_args.algorithm_name[:2] == "ft"
-
+        if self.use_full_comm:
+            print("Evaluating with full communication")
+        elif self.use_partial_comm:
+            print("Evaluating with comm sigma: ", self.all_args.com_sigma)
         # Visualization of the results
         mission_completion_data = []
 
@@ -1588,7 +1607,8 @@ class GridWorldRunner(Runner):
                                                         self.asynch_control.activate(thread[0], i)
                                 elif self.use_full_comm:
                                     for i in range(self.num_agents):
-                                        if self.asynch_control.standby[thread[0], i] and self.asynch_control.wait[thread[0], i] <= generate_random_period(2, 4):
+                                        if self.asynch_control.standby[thread[0], i]:
+                                        # if self.asynch_control.standby[thread[0], i] and self.asynch_control.wait[thread[0], i] <= generate_random_period(2, 4):
                                             self.asynch_control.activate(thread[0], i)
                 else:
                     for e in range(self.n_rollout_threads):
@@ -1644,7 +1664,10 @@ class GridWorldRunner(Runner):
                 str(np.mean(self.eval_env_infos['eval_merge_explored_ratio'])))
 
         # Save data to file
-        np.save('Task3_catmip.npy', mission_completion_data)
+        # np.save('Task3_synch_catmip_sigma_2.npy', mission_completion_data)
+        np.save('Task3_catmip_smallMA_maxtime_5.npy', mission_completion_data)
+        # data = np.load('mission_completion_data.npy')
+        # print("data is: ", data)
 
         # Visualize the results
         success_counts = np.zeros(self.max_steps + 1)
@@ -1848,7 +1871,8 @@ class GridWorldRunner(Runner):
                                                         self.asynch_control.activate(thread[0], i)
                                 elif self.use_full_comm:
                                     for i in range(self.num_agents):
-                                        if self.asynch_control.standby[thread[0], i] and self.asynch_control.wait[thread[0], i] <= generate_random_period(2, 4):
+                                        if self.asynch_control.standby[thread[0], i]:
+                                        # if self.asynch_control.standby[thread[0], i] and self.asynch_control.wait[thread[0], i] <= generate_random_period(2, 4):
                                             self.asynch_control.activate(thread[0], i)                  
                 else:
                     for e in range(self.n_rollout_threads):
@@ -1865,7 +1889,13 @@ class GridWorldRunner(Runner):
                 
                 if (not self.asynch and local_step == self.local_step_num - 1) or (self.asynch and np.any(self.asynch_control.active)):
                     if self.asynch:
+                        # print("number of active agents are: ", len(self.asynch_control.active_agents()))
                         for e, a, s in self.asynch_control.active_agents():
+                            # print("agent {} period reward is: {}".format(a, period_rewards[e, a, 0]))
+                            # if a == 0:
+                            # print("agent {} activated at step {} and agent_step {} with period reward {}".format(a, step, s, period_rewards[e, a, 0]))
+                            # print("agent {}: {}".format(a, period_rewards[e, a, 0]))
+                                # print("agent's current pos is ", (infos[e]['current_agent_pos'][a]-self.agent_view_size).T)
                             period_rewards[e, a, 0] = 0
                     else:
                         # ic(period_rewards) #for monitoring the rewards
