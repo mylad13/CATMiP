@@ -37,13 +37,31 @@ def bresenham_line(x1, y1, x2, y2):
     return cells
 
 def check_visibility(cells, grid):
+    # Return the visible cells along the ray.
     visible_cells = []
+    prev = None
     for cell in cells:
+        # If moving diagonally, check if both adjacent cells block view.
+        if prev is not None:
+            dx = cell[0] - prev[0]
+            dy = cell[1] - prev[1]
+            if abs(dx) == 1 and abs(dy) == 1:
+                # Check the two cells adjacent to the diagonal move.
+                adj1 = (prev[0], cell[1])
+                adj2 = (cell[0], prev[1])
+                obj1 = grid.get(adj1[0], adj1[1])
+                obj2 = grid.get(adj2[0], adj2[1])
+                if (obj1 is not None and not obj1.see_behind()) and \
+                   (obj2 is not None and not obj2.see_behind()):
+                    # Diagonal passage is blocked by obstacles in both adjacent cells.
+                    break
+
+        # Process the current cell.
         obj = grid.get(cell[0], cell[1])
-        if obj is not None and obj.see_behind() == False:
-            visible_cells.append(cell)
-            break #discard cells after any obstacles
         visible_cells.append(cell)
+        if obj is not None and not obj.see_behind():
+            break 
+        prev = cell
     return visible_cells
 
 def l1distance(x, y):

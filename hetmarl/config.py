@@ -353,7 +353,11 @@ def get_config():
     # env modifications
     parser.add_argument("--block_doors", action='store_true', default=False, help="block some doors by obstacles")
     parser.add_argument("--block_chance", type=float, default=0.25)
-    
+
+
+    parser.add_argument("--use_slam_noise", action='store_true', default=False, help="use SLAM noise in agent inputs")
+    parser.add_argument("--slam_noise_prob", type=float, default=0.05, help="probability of SLAM noise in agent inputs")
+
     parser.add_argument('--asynch', default=False, action='store_true', help="asynchronized training")
 
     return parser

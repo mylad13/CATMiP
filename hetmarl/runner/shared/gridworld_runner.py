@@ -11,7 +11,7 @@ from icecream import ic
 import matplotlib.pyplot as plt
 import cv2
 from collections import defaultdict, deque
-from hetmarl.utils.util import update_linear_schedule, get_shape_from_act_space, get_shape_from_obs_space, AsynchControl
+from hetmarl.utils.util import update_linear_schedule, get_shape_from_act_space, get_shape_from_obs_space, AsynchControl, plot_macro_obs, inject_noise_to_occupancy
 from hetmarl.runner.shared.base_runner import Runner
 import torch.nn as nn
 
@@ -281,6 +281,9 @@ class GridWorldRunner(Runner):
                     obs['timespan'][e, a] = step - self.last_active_step[e, a]
                     self.last_active_step[e, a] = step
 
+        explored_map = np.zeros((len(dict_obs), self.num_agents, self.full_w, self.full_h), dtype=np.float32)
+        occupancy_map = np.zeros((len(dict_obs), self.num_agents, self.full_w, self.full_h), dtype=np.float32)
+        noisy_occupancy_map = np.zeros((len(dict_obs), self.num_agents, self.full_w, self.full_h), dtype=np.float32)
 
         current_agent_pos = np.zeros((len(dict_obs), self.num_agents, 2), dtype=np.int32)
         agent_pos_map = np.zeros((len(dict_obs), self.num_agents, self.full_w, self.full_h), dtype=np.float32)
@@ -316,13 +319,21 @@ class GridWorldRunner(Runner):
             for e in range(len(dict_obs)):
                 for agent_id in range(self.num_agents):
                     
+                    explored_map[e,agent_id] = infos[e]['explored_all_map']
+                    occupancy_map[e, agent_id] = infos[e]['occupied_all_map']
+                    explored_mask = explored_map[e, agent_id] == 1
+                    noisy_occupancy_map[e, agent_id] = inject_noise_to_occupancy(occupancy_map[e, agent_id], explored_mask, p_fp=0.02, p_fn=0.05)
+
+
                     # agent_dir_vec = DIR_TO_VEC[infos[e]['agent_direction'][agent_id]]
                     # current_agent_pos is based on the larger full map
                     current_agent_pos[e, agent_id] = infos[e]['current_agent_pos'][agent_id]
                     agent_pos_map[e, agent_id, current_agent_pos[e,agent_id][0],
                                    current_agent_pos[e,agent_id][1]] = 1
-                    global_agent_pos_map[e, agent_id, current_agent_pos[e,agent_id][0]-1:current_agent_pos[e,agent_id][0]+2,
-                                   current_agent_pos[e,agent_id][1]-1:current_agent_pos[e,agent_id][1]+2] = 1
+                    # global_agent_pos_map[e, agent_id, current_agent_pos[e,agent_id][0]-1:current_agent_pos[e,agent_id][0]+2,
+                    #                current_agent_pos[e,agent_id][1]-1:current_agent_pos[e,agent_id][1]+2] = 1
+                    global_agent_pos_map[e, agent_id, current_agent_pos[e,agent_id][0],
+                                   current_agent_pos[e,agent_id][1]] = 1
                     # for target_cell in infos[e]['all_target_set']:
                     #     target_all_map[e, target_cell[1]+self.agent_view_size-1: target_cell[1]+self.agent_view_size+2,
                     #                 target_cell[0]+self.agent_view_size-1:target_cell[0]+self.agent_view_size+2] = 1
@@ -360,7 +371,7 @@ class GridWorldRunner(Runner):
 
                     obs['global_agent_map'][e, agent_id, 0] = infos[e]['explored_all_map'][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size] 
-                    obs['global_agent_map'][e, agent_id, 1] = infos[e]['occupied_all_map'][self.agent_view_size:self.full_w -
+                    obs['global_agent_map'][e, agent_id, 1] = noisy_occupancy_map[e, agent_id][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
                     obs['global_agent_map'][e, agent_id, 2] = infos[e]['global_target_all_map'][self.agent_view_size:self.full_w -
                                                                     self.agent_view_size, self.agent_view_size:self.full_w-self.agent_view_size]
@@ -383,7 +394,7 @@ class GridWorldRunner(Runner):
                                        
                     obs['local_agent_map'][e,agent_id,0] = infos[e]['explored_all_map'][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                                                                 +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
-                    obs['local_agent_map'][e,agent_id,1] = infos[e]['occupied_all_map'][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
+                    obs['local_agent_map'][e,agent_id,1] = noisy_occupancy_map[e, agent_id][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                                                                 +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
                     obs['local_agent_map'][e,agent_id,2] = infos[e]['target_all_map'][current_agent_pos[e, agent_id][0]-self.action_size:current_agent_pos[e, agent_id][0]
                                                                 +self.action_size+1, current_agent_pos[e, agent_id][1]-self.action_size:current_agent_pos[e, agent_id][1]+self.action_size+1]
@@ -506,9 +517,10 @@ class GridWorldRunner(Runner):
                 # obs['agent_inventory'][e] = infos[e]['agent_inventory']
         else:
             pass
-        # plt.imshow(obs['global_agent_map'][0,2,4])
-        # plt.imshow(obs['local_agent_map'][0,0,0])
+        # plt.imshow(obs['global_agent_map'][0,0,1])
+        # plt.imshow(obs['local_agent_map'][0,0,2])
         # plt.show()
+        # plot_macro_obs(obs, 0)
 
         return obs
 
@@ -1665,7 +1677,7 @@ class GridWorldRunner(Runner):
                 # return np.random.randint(min_t, max_t)
                 return 0
             self.asynch_control = AsynchControl(num_envs=self.n_rollout_threads, num_agents=self.num_agents,
-                                                limit=self.episode_length, random_fn=generate_random_period, min_wait=2, max_wait=5, rest_time = 10)
+                                                limit=self.episode_length, random_fn=generate_random_period, min_wait=2, max_wait=5, rest_time = 20)
         
         envs = self.envs
         # Init env infos.

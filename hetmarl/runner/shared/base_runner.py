@@ -31,7 +31,6 @@ class Runner(object):
         self.env_name = self.all_args.env_name
         self.algorithm_name = self.all_args.algorithm_name
         self.experiment_name = self.all_args.experiment_name
-        self.use_centralized_V = self.all_args.use_centralized_V
         self.num_env_steps = self.all_args.num_env_steps
         self.episode_length = self.all_args.episode_length
         self.n_rollout_threads = self.all_args.n_rollout_threads

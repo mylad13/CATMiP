@@ -287,8 +287,10 @@ class SearchAndRescueEnv(MultiRoomEnv):
                 self.global_target_each_map[agent_id][trace_pos[1]+self.agent_view_size,trace_pos[0]+self.agent_view_size] = 0.25
         for target_pos in self.agent_target_sets[agent_id]:
             self.target_each_map[agent_id][target_pos[1]+self.agent_view_size, target_pos[0]+self.agent_view_size] = 1
-            self.global_target_each_map[agent_id][target_pos[1]+self.agent_view_size-1:target_pos[1]+self.agent_view_size+2,
-                                    target_pos[0]+self.agent_view_size-1:target_pos[0]+self.agent_view_size+2] = 1
+            # self.global_target_each_map[agent_id][target_pos[1]+self.agent_view_size-1:target_pos[1]+self.agent_view_size+2,
+            #                         target_pos[0]+self.agent_view_size-1:target_pos[0]+self.agent_view_size+2] = 1
+            self.global_target_each_map[agent_id][target_pos[1]+self.agent_view_size,
+                                    target_pos[0]+self.agent_view_size] = 1
         
 
     def set_target_all_map(self):
@@ -301,8 +303,10 @@ class SearchAndRescueEnv(MultiRoomEnv):
     
         for target_pos in self.all_target_set:
             self.target_all_map[target_pos[1]+self.agent_view_size, target_pos[0]+self.agent_view_size] = 1
-            self.global_target_all_map[target_pos[1]+self.agent_view_size-1:target_pos[1]+self.agent_view_size+2,
-                                    target_pos[0]+self.agent_view_size-1:target_pos[0]+self.agent_view_size+2] = 1
+            # self.global_target_all_map[target_pos[1]+self.agent_view_size-1:target_pos[1]+self.agent_view_size+2,
+            #                         target_pos[0]+self.agent_view_size-1:target_pos[0]+self.agent_view_size+2] = 1
+            self.global_target_all_map[target_pos[1]+self.agent_view_size,
+                                    target_pos[0]+self.agent_view_size] = 1
         
 
     def set_rubble_each_map(self, agent_id):
@@ -1698,6 +1702,9 @@ class SearchAndRescueEnv(MultiRoomEnv):
             occupied = self.info['occupied_each_map'][i][self.agent_view_size:self.full_w - self.agent_view_size,
                                                         self.agent_view_size:self.full_h - self.agent_view_size]
             occupied = occupied.T
+            explored = self.info['explored_each_map'][i][self.agent_view_size:self.full_w - self.agent_view_size,
+                                                        self.agent_view_size:self.full_h - self.agent_view_size]
+            explored = explored.T
             # obs_list = []
             # for x in range(self.width):
             #     #enclosing the map for the path planner
@@ -1713,11 +1720,12 @@ class SearchAndRescueEnv(MultiRoomEnv):
             for x in range(-self.action_size, self.action_size+1):
                 for y in range(-self.action_size, self.action_size+1):
                     coord = np.array([x, y]) + self.agent_pos[i]
-                    if coord[0] < 1 or coord[0] >= self.width - 1 or coord[1] < 1 or coord[1] >= self.height - 1: #outside map boundaries and edges of the map
+                    if coord[0] < 1 or coord[0] >= self.width - 1 or coord[1] < 1 or coord[1] >= self.height - 1: # Outside map boundaries and edges of the map
                         available_actions[i, (x + self.action_size)*(2*self.action_size+1) + (y + self.action_size)] = 0
-                    elif occupied[coord[0], coord[1]] == 1: #Moving to occupied space is not available
+                    elif occupied[coord[0], coord[1]] == 1: # Moving to occupied space is not available
                         available_actions[i, (x + self.action_size)*(2*self.action_size+1) + (y + self.action_size)] = 0
-                    
+                    elif explored[coord[0], coord[1]] == 0: # Moving to unexplored space is not available
+                        available_actions[i, (x + self.action_size)*(2*self.action_size+1) + (y + self.action_size)] = 0
                     else: 
                         if self.use_agent_obstacle:
                             for j in range(self.num_agents):
@@ -1725,7 +1733,7 @@ class SearchAndRescueEnv(MultiRoomEnv):
                                     if coord[0] == self.agent_pos[j][0] and coord[1] == self.agent_pos[j][1]:
                                         available_actions[i, (x + self.action_size)*(2*self.action_size+1) + (y + self.action_size)] = 0
                                         break
-                        for adjacent_cells in self.adjacent_cells(coord[0], coord[1]):
+                        for adjacent_cells in self.adjacent_cells(coord[0], coord[1]): # If the cell is surrounded by obstacles, it is not available
                             if occupied[adjacent_cells[0], adjacent_cells[1]] == 0:
                                 break
                         else:
