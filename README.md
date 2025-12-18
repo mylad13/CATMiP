@@ -30,14 +30,19 @@ The performance of a model trained on a $20\times 20$ map with one rescuer agent
 
 
 ## Citation
-The [preprint is now available on arXiv](https://arxiv.org/abs/2410.06372):
+Please cite the paper if you used it in you [work] (https://doi.org/10.1016/j.robot.2025.105131):
 ```
-@misc{farjadnasab2024cooperative,
-    title={Cooperative and Asynchronous Transformer-based Mission Planning for Heterogeneous Teams of Mobile Robots},
-    author={Milad Farjadnasab and Shahin Sirouspour},
-    year={2024},
-    eprint={2410.06372},
-    archivePrefix={arXiv},
-    primaryClass={cs.RO}
+@article{FARJADNASAB2025105131,
+title = {Cooperative and Asynchronous Transformer-Based Mission Planning for heterogeneous teams of mobile robots},
+journal = {Robotics and Autonomous Systems},
+volume = {194},
+pages = {105131},
+year = {2025},
+issn = {0921-8890},
+doi = {https://doi.org/10.1016/j.robot.2025.105131},
+url = {https://www.sciencedirect.com/science/article/pii/S0921889025002283},
+author = {Milad Farjadnasab and Shahin Sirouspour},
+keywords = {Autonomous robots, Motion planning, Robot learning, Reinforcement learning},
 }
+
 ```
