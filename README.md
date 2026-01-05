@@ -30,7 +30,7 @@ The performance of a model trained on a $20\times 20$ map with one rescuer agent
 
 
 ## Citation
-Please cite the paper if you used it in you [work] (https://doi.org/10.1016/j.robot.2025.105131):
+Please cite the [paper](https://doi.org/10.1016/j.robot.2025.105131) if you used it in your work:
 ```
 @article{FARJADNASAB2025105131,
 title = {Cooperative and Asynchronous Transformer-Based Mission Planning for heterogeneous teams of mobile robots},
